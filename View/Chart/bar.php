@@ -26,7 +26,7 @@
 <body>
 
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-<div id="main" style="width: {$width}px;height:{$height}px;"></div>
+<div id="main" style="width: {$size[width]}px;height:{$size[height]}px;"></div>
 
 <script>
     // 基于准备好的dom，初始化echarts实例
@@ -71,7 +71,7 @@
         ],
         series: [
             {
-                name: '直接访问',
+                name: '数量',
                 type: 'bar',
                 barWidth: '60%',
                 data: "{$y_data}".split(',')

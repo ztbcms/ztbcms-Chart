@@ -17,15 +17,53 @@
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script src="https://cdn.bootcss.com/vue/2.3.3/vue.js"></script>
-
-    <script src="https://cdn.bootcss.com/echarts/3.6.1/echarts.common.min.js"></script>
-
 </head>
 <body>
 
-<div id="app">
+<div id="app" class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <table class="text-center" style="width: 100%;">
+                <caption>X 轴可选字段</caption>
+                <tbody>
+                <tr>
+                    <th>字段名</th>
+                    <th>表字段名</th>
+                    <th>操作</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4 text-center">
+            <table class="text-center" style="width: 100%;">
+                <caption>Y 轴可选字段</caption>
+                <tbody>
+                <tr>
+                    <th>字段名</th>
+                    <th>表字段名</th>
+                    <th>操作</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <table class="text-center" style="width: 100%;">
+                <caption>X 筛选字段</caption>
+                <tbody>
+                <tr>
+                    <th>字段名</th>
+                    <th>表字段名</th>
+                    <th>操作</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
+    <div>
+        演示：
+        <iframe src="{:U('Chart/Api/getChart')}" frameborder="0"></iframe>
+    </div>
 </div>
 
 </body>
