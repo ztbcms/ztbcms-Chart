@@ -19,6 +19,8 @@
 
     <script src="https://cdn.bootcss.com/vue/2.3.3/vue.js"></script>
 
+    <script src="https://cdn.bootcss.com/echarts/3.6.1/echarts.common.min.js"></script>
+
 </head>
 <body>
 
