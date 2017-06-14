@@ -71,7 +71,7 @@
         ],
         series: [
             {
-                name: '数量',
+                name: '{$tips}',
                 type: 'bar',
                 barWidth: '60%',
                 data: "{$y_data}".split(',')

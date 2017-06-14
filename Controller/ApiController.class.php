@@ -49,6 +49,9 @@ class ApiController extends Controller {
         $size = ChartService::getSize(I('get.size', '600*400'));
         $this->assign('size', $size);
 
+        //设置提示
+        $this->assign('tips',$chart['tips']);
+
         //判断图表显示类型
         self::showChart(I('get.type', '1'));
     }
@@ -79,6 +82,9 @@ class ApiController extends Controller {
         $size = ChartService::getSize(I('get.size', '600*400'));
         var_dump($size);
         $this->assign('size', $size);
+
+        //设置提示
+        $this->assign('tips',$chart['tips']);
 
         //判断图表显示类型
         self::showChart(I('get.type', '1'));
