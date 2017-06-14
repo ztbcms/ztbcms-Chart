@@ -26,6 +26,22 @@ class IndexController extends AdminBase {
         $this->assign('tables',$tables);
         $this->display();
     }
+    
+    /**
+     *  创建图表
+     */
+    public function doCreate(){
+        $post = I('post');
+        $post['token'] = md5(time() . $post['name']);
+        $status = M('chartList')->data($post)->add();
+        if ($status > 0){
+            $post['id'] = $status;
+            $this->ajaxReturn(self::createReturn(true,$post));
+        }else{
+            $this->ajaxReturn(self::createReturn(false));
+        }
+        
+    }
 
     /**
      * 已创建图表列表

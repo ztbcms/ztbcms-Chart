@@ -27,6 +27,10 @@
         <form>
             <div class="from-group">
                 <label class="from-label" for="">数据来源表</label>
+                <input class="from-control" type="text" name="name" v-model="options.name" id="name" placeholder="请输入图表名称">
+            </div>
+            <div class="from-group">
+                <label class="from-label" for="">数据来源表</label>
                 <select class="from-control" name="table" id="table" v-model="options.table">
                     <option value="">选择模型表</option>
                     <volist name="tables" id="table">
@@ -77,10 +81,22 @@
 
             </div>
 
+            <div class="from-group">
+                <label class="from-label" for="">统计数（Y 轴）</label>
+                <input type="text" class="from-control" name="tips" id="tips" v-model="options.tips" placeholder="请输入图表悬浮提示">
+            </div>
+
 
         </form>
 
         <button type="button" @click="makePreviewer">生成预览</button>
+
+
+        <br><br>
+        <button type="button" @click="createChart">生成图表</button>
+        <div id="url" v-if="url != ''">
+            生成成功！永久链接为：{{ url }}
+        </div>
     </div>
 
     <div v-if="preview">
@@ -100,11 +116,13 @@
             width:'900',
             height:'400',
             options:{
+                name:'',
                 table:'',
                 x:'',
                 x_type:'',
                 y:'',
                 y_type:'',
+                tips:''
             }
 
         },
@@ -120,6 +138,16 @@
             },
             makePreviewer:function () {
                 this.previewUrl = this.getUrl();
+            },
+            createChart:function(){
+                $.post("{:U('Index/doCreate')}",this.options,function(res){
+                    if(res.status){
+                        alert('图表创建成功!');
+                        that.url = "{:U('Api/getChart')}&token=" + res.data.token;            
+                    }else{
+                        alert('图表创建失败!')
+                    }
+                },'json');
             }
         },
         watch:{
