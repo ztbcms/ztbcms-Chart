@@ -4,6 +4,7 @@ namespace Chart\Controller;
 
 use Common\Controller\AdminBase;
 use Chart\Service\ChartService;
+use Think\Model;
 
 /**
  *  图表
@@ -20,6 +21,9 @@ class IndexController extends AdminBase {
      * 创建图表
      */
     public function create() {
+        $model = new Model();
+        $resuilt = $model->query('show tables;');
+        var_dump($resuilt);
         $this->display();
     }
 
@@ -67,5 +71,10 @@ class IndexController extends AdminBase {
             default:
                 $this->display('charts/bar');
         }
+    }
+
+    public function getChartList(){
+        $chartList = M('chartList')->select();
+        $this->ajaxReturn(self::createReturn(true,$chartList));
     }
 }

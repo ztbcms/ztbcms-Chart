@@ -25,8 +25,49 @@
 <body>
 
 <div id="app">
-
+    <table class="table">
+        <caption>图表列表</caption>
+        <tr>
+            <th>id</th>
+            <th>图表名</th>
+            <th>token</th>
+            <th>预览</th>
+        </tr>
+        <tr v-for="item in list">
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.token }}</td>
+            <td>
+                <iframe :src="'{:U('Api/getChart')}&size=300*150&token=' + item.token"></iframe>
+            </td>
+        </tr>
+    </table>
 </div>
 
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+            list:[],
+            page:1,
+            limit:20,
+        },
+        mounted:function(){
+            this.getList();
+        },
+        methods:{
+            getList:function(){
+                let that = this;
+                let post = {
+                    page: that.page,
+                    limit: that.limit
+                };
+                $.post("{:U('Index/getChartList')}",post,function(res){
+                    that.list = res.data;
+                },'json');
+            }
+        }
+    })
+</script>
 </body>
 </html>

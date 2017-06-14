@@ -17,12 +17,6 @@ return array(
         //子菜单列表
         "child" => array(
             array(
-                "route" => "Chart/Index/config",
-                "type" => 1,
-                "status" => 1,
-                "name" => "配置图表",
-            ),
-            array(
                 "route" => "Chart/Index/create",
                 "type" => 1,
                 "status" => 1,
