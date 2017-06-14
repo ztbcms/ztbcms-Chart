@@ -50,8 +50,6 @@ class ChartService {
         $table = M($tableName);
 
         switch ($y_type) {
-            case 'field':
-                break;
             case 'count':
                 $sql = 'select count(' . $y . ') as db_count from ' . C('DB_PREFIX') . $tableName . ' group by ' . $x;
                 $y_set = $table->query($sql);

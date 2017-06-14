@@ -4,25 +4,13 @@ namespace Chart\Controller;
 
 use Think\Controller;
 use Chart\Service\ChartService;
+use Chart\Model\ChartModel;
 
 /**
  * 对外公开的 API 接口
  * @package Chart\Controller
  */
 class ApiController extends Controller {
-
-    /**
-     * 柱状图
-     */
-    const CHART_BAR = 1;
-    /**
-     * 折线图
-     */
-    const CHART_LINK = 2;
-    /**
-     * 饼图
-     */
-    const CHART_PIE = 3;
 
     /**
      * 获取图表
@@ -96,13 +84,13 @@ class ApiController extends Controller {
      */
     protected function showChart($type = 1) {
         switch ($type) {
-            case self::CHART_BAR:
+            case ChartModel::CHART_BAR:
                 $this->display('charts/bar');
                 break;
-            case self::CHART_LINK:
+            case ChartModel::CHART_LINK:
                 $this->display('charts/link');
                 break;
-            case self::CHART_PIE:
+            case ChartModel::CHART_PIE:
                 $this->display('charts/pie');
                 break;
             default:

@@ -14,6 +14,8 @@
 
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 
+    <script src="https://cdn.bootcss.com/vue/2.3.3/vue.js"></script>
+
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -22,49 +24,119 @@
 
 <div id="app" class="container">
     <div class="row">
-        <div class="col-md-4">
-            <table class="text-center" style="width: 100%;">
-                <caption>X 轴可选字段</caption>
-                <tbody>
-                <tr>
-                    <th>字段名</th>
-                    <th>表字段名</th>
-                    <th>操作</th>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-4 text-center">
-            <table class="text-center" style="width: 100%;">
-                <caption>Y 轴可选字段</caption>
-                <tbody>
-                <tr>
-                    <th>字段名</th>
-                    <th>表字段名</th>
-                    <th>操作</th>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-4">
-            <table class="text-center" style="width: 100%;">
-                <caption>X 筛选字段</caption>
-                <tbody>
-                <tr>
-                    <th>字段名</th>
-                    <th>表字段名</th>
-                    <th>操作</th>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        <form>
+            <div class="from-group">
+                <label class="from-label" for="">数据来源表</label>
+                <select class="from-control" name="table" id="table" v-model="options.table">
+                    <option value="">选择模型表</option>
+                    <volist name="tables" id="table">
+                        <option value="{$table['tablename']}">{$table[name]}</option>
+                    </volist>
+                </select>
+            </div>
+
+            <div class="from-group">
+                <label class="from-label" for="">请选择统计基准（X 轴）</label>
+
+                <select class="from-control" name="x_type" id="x_type" v-model="options.x_type">
+                    <option value="">选择统计方式</option>
+                    <option value="field">字段</option>
+                    <option value="__during">时间段</option>
+                    <option value="__script">脚本</option>
+                </select>
+
+                <select class="from-control" name="x" id="x_field" v-model="options.x" v-if="options.x_type == 'field'">
+                    <option value="">请选择字段</option>
+                    <option v-for="field in fields" :value="field">{{ field }}</option>
+                </select>
+
+                <select class="from-control" name="x" id="x_script" v-model="options.x" v-if="options.x_type == '__script'">
+                    <option value="">请选择脚本</option>
+                    <option v-for="field in fields" :value="field">{{ field }}</option>
+                </select>
+
+            </div>
+
+            <div class="from-group">
+                <label class="from-label" for="">统计数（Y 轴）</label>
+                <select class="from-control" name="y_type" id="y_type" v-model="options.y_type">
+                    <option value="">选择统计方式</option>
+                    <option value="count">字段（计数总数）</option>
+                    <option value="__script">脚本</option>
+                </select>
+
+                <select class="from-control" name="y" id="y_field" v-model="options.y" v-if="options.y_type == 'count'">
+                    <option value="">请选择字段</option>
+                    <option v-for="field in fields" :value="field">{{ field }}</option>
+                </select>
+
+                <select class="from-control" name="y" id="y_script" v-model="options.y" v-if="options.y_type == '__script'">
+                    <option value="">请选择脚本</option>
+                    <option v-for="field in fields" :value="field">{{ field }}</option>
+                </select>
+
+            </div>
+
+
+        </form>
+
+        <button type="button" @click="makePreviewer">生成预览</button>
     </div>
 
-    <div>
+    <div v-if="preview">
         演示：
-        <iframe src="{:U('Chart/Api/getChart')}" frameborder="0"></iframe>
+        <iframe :src="previewUrl" frameborder="0" :width="width" :height="height"></iframe>
     </div>
 </div>
+
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+            base:"{:U('Chart/Index/previewer')}",
+            preview: true,
+            previewUrl:'http://ztbcms.de/index.php?g=Chart&m=Api&a=getChart&token=a9a41bec8365599185c729e2047ae114&type=1&size=900*400',
+            fields:[],
+            width:'900',
+            height:'400',
+            options:{
+                table:'',
+                x:'',
+                x_type:'',
+                y:'',
+                y_type:'',
+            }
+
+        },
+        methods:{
+            getUrl :function () {
+                let url = this.base;
+                for(let i in this.options){
+                    url += '&' + i + '=' + this.options[i];
+                }
+                url += '&size=' + this.width + '*' + this.height;
+
+                return url;
+            },
+            makePreviewer:function () {
+                this.previewUrl = this.getUrl();
+            }
+        },
+        watch:{
+            "options.table":function(){
+                let that = this;
+                let data = {
+                    table:this.options.table
+                };
+                $.get("{:U('Index/getTableFields')}",data,function(res){
+                    if(res.status){
+                        that.fields = res.data;
+                    }
+                },'json');
+            }
+        }
+    })
+</script>
 
 </body>
 </html>
