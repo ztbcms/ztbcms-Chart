@@ -86,7 +86,7 @@
             </div>
 
             <div class="from-group">
-                <label class="from-label" for="">统计数（Y 轴）</label>
+                <label class="from-label" for="">鼠标悬浮提示</label>
                 <input type="text" class="from-control" name="tips" id="tips" v-model="options.tips" placeholder="请输入图表悬浮提示">
             </div>
 

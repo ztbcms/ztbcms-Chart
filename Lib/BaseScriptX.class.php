@@ -2,7 +2,7 @@
 
 namespace Chart\Lib;
 
-abstract class BaseScript {
+abstract class BaseScriptX {
     /**
      * 返回基准字段
      * @return string

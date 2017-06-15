@@ -13,5 +13,3 @@ CREATE TABLE `cms_chart_list` (
   `tips`    VARCHAR(255)  DEFAULT '' COMMENT '提示信息',
   PRIMARY KEY (`id`)
 )ENGINE = InnoDB DEFAULT CHARSET = utf8;
-
-INSERT INTO `cms_chart_list` (`id`, `name`, `token`, `table`, `x`, `x_type`, `y`, `y_type`, `filter`, `tips`) VALUES ('1', '示例图表', 'a9a41bec8365599185c729e2047ae114', 'area_city', 'parentid', 'field', 'id', 'count', NULL, '城市数');
