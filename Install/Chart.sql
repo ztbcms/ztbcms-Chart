@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `cms_chart_list`;
 
 CREATE TABLE `cms_chart_list` (
   `id`      INT(11)       NOT NULL COMMENT 'ID' AUTO_INCREMENT,
-  `name`    VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '图表名称',
+  `title`    VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '图表名称',
   `token`   VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '图表唯一标识',
   `table`   VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '统计表',
   `x`       VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'X 轴筛选字段',

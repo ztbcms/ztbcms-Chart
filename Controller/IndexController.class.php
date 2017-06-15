@@ -31,14 +31,20 @@ class IndexController extends AdminBase {
      *  创建图表
      */
     public function doCreate(){
-        $post = I('post');
-        $post['token'] = md5(time() . $post['name']);
-        $status = M('chartList')->data($post)->add();
-        if ($status > 0){
-            $post['id'] = $status;
-            $this->ajaxReturn(self::createReturn(true,$post));
+        $post = I('post.');
+        $post['token'] = md5(json_encode($post));
+        $chart = M('chartList')->where(['token' => $post['token']])->find();
+
+        if($chart){
+            $this->ajaxReturn(self::createReturn(false,$chart,'图表已存在！'));
         }else{
-            $this->ajaxReturn(self::createReturn(false));
+            $status = M('chartList')->data($post)->add();
+            if ($status > 0){
+                $post['id'] = $status;
+                $this->ajaxReturn(self::createReturn(true,$post));
+            }else{
+                $this->ajaxReturn(self::createReturn(false));
+            }
         }
         
     }
@@ -64,9 +70,15 @@ class IndexController extends AdminBase {
         $y_data = ChartService::getY($get['table'], $get['x'], $get['y'], $get['y_type']);
         $this->assign('y_data', $y_data);
 
-        //$get
+        //设置图表大小
         $size = ChartService::getSize($get['size']);
         $this->assign('size', $size);
+
+        //设置图表标题
+        $this->assign('title',$get['title']);
+
+        //设置提示
+        $this->assign('tips',$get['tips']);
 
         //判断图表显示类型
         self::showChart(I('get.type', '1'));

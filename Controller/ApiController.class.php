@@ -37,6 +37,9 @@ class ApiController extends Controller {
         $size = ChartService::getSize(I('get.size', '600*400'));
         $this->assign('size', $size);
 
+        //设置图表标题
+        $this->assign('title',$chart['title']);
+
         //设置提示
         $this->assign('tips',$chart['tips']);
 
@@ -70,6 +73,9 @@ class ApiController extends Controller {
         $size = ChartService::getSize(I('get.size', '600*400'));
         var_dump($size);
         $this->assign('size', $size);
+
+        //设置图表标题
+        $this->assign('title',$chart['title']);
 
         //设置提示
         $this->assign('tips',$chart['tips']);

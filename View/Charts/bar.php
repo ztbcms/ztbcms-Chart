@@ -33,6 +33,9 @@
     app = echarts.init(document.getElementById('main'));
 
     option = {
+        title: {
+            text: '{$title}'
+        },
         color: ['#3398DB'],
         tooltip: {
             trigger: 'axis',

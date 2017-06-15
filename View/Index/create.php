@@ -27,7 +27,7 @@
         <form>
             <div class="from-group">
                 <label class="from-label" for="">数据来源表</label>
-                <input class="from-control" type="text" name="name" v-model="options.name" id="name" placeholder="请输入图表名称">
+                <input class="from-control" type="text" name="title" v-model="options.title" id="title" placeholder="请输入图表名称">
             </div>
             <div class="from-group">
                 <label class="from-label" for="">数据来源表</label>
@@ -116,15 +116,15 @@
             width:'900',
             height:'400',
             options:{
-                name:'',
+                title:'',
                 table:'',
                 x:'',
                 x_type:'',
                 y:'',
                 y_type:'',
                 tips:''
-            }
-
+            },
+            url:''
         },
         methods:{
             getUrl :function () {
@@ -140,6 +140,7 @@
                 this.previewUrl = this.getUrl();
             },
             createChart:function(){
+                let that = this;
                 $.post("{:U('Index/doCreate')}",this.options,function(res){
                     if(res.status){
                         alert('图表创建成功!');
