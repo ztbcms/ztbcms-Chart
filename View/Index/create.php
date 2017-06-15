@@ -126,6 +126,16 @@
         </div>
 
         <div class="form-group">
+            <label class="form-label" for="">排序方式</label>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="order" id="order" v-model="options.order"
+                           placeholder="请输入排序方式">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
             <button class="btn btn-info" type="button" @click="makePreviewer">生成预览</button>
 
             <button class="btn btn-success" type="button" @click="createChart">生成图表</button>
@@ -162,7 +172,8 @@
                 x_type: '',
                 y: '',
                 y_type: '',
-                tips: ''
+                tips: '',
+                order:'id'
             },
             url: ''
         },

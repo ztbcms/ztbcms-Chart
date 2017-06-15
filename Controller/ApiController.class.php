@@ -26,11 +26,11 @@ class ApiController extends Controller {
         }
 
         //设置 X 轴数据
-        $x_data = ChartService::getX($chart['table'], $chart['x'], $chart['x_type']);
+        $x_data = ChartService::getX($chart['table'], $chart['x'], $chart['x_type'], $chart['order']);
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type']);
+        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type'], $chart['order']);
         $this->assign('y_data', $y_data);
 
         //设置图表大小
@@ -60,12 +60,12 @@ class ApiController extends Controller {
         }
 
         //设置 X 轴数据
-        $x_data = ChartService::getX($chart['table'], $chart['x'], $chart['x_type']);
+        $x_data = ChartService::getX($chart['table'], $chart['x'], $chart['x_type'], $chart['order']);
         var_dump($x_data);
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type']);
+        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type'], $chart['order']);
         var_dump($y_data);
         $this->assign('y_data', $y_data);
 
