@@ -10,6 +10,7 @@ use Chart\Model\ChartModel;
  *  图表
  */
 class IndexController extends AdminBase {
+
     /**
      * 首页，简介
      */
@@ -22,8 +23,8 @@ class IndexController extends AdminBase {
      */
     public function create() {
         $this->assign('tables', self::getModels());
-        $this->assign('xScript',self::getXScripts());
-        $this->assign('yScript',self::getYScripts());
+        $this->assign('xScript', self::getXScripts());
+        $this->assign('yScript', self::getYScripts());
         $this->display();
     }
 
@@ -53,7 +54,7 @@ class IndexController extends AdminBase {
      * 获取模型
      * @return mixed
      */
-    public function getModels(){
+    public function getModels() {
         return M('model')->select();
     }
 
@@ -98,6 +99,9 @@ class IndexController extends AdminBase {
      * 已创建图表列表
      */
     public function lists() {
+        $session = md5(get_client_ip() . time());
+        session('chart_auth', $session);
+        $this->assign('chart_auth', $session);
         $this->display();
     }
 
@@ -165,5 +169,18 @@ class IndexController extends AdminBase {
         $model = M($table);
         $fields = $model->getDbFields();
         $this->ajaxReturn(self::createReturn(true, $fields));
+    }
+
+    /**
+     * 删除图表
+     */
+    public function del() {
+        if (session('chart_auth') != I('post.auth')) {
+            exit('非法请求');
+        }
+        $token = I('post.token');
+        $status = M('chartList')->where(['token' => $token])->delete();
+
+        $this->ajaxReturn(self::createReturn($status));
     }
 }
