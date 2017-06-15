@@ -21,32 +21,77 @@ class IndexController extends AdminBase {
      * 创建图表
      */
     public function create() {
-        $model = M('model');
-        $tables = $model->select();
-        $this->assign('tables',$tables);
+        $this->assign('tables', self::getModels());
+        $this->assign('xScript',self::getXScripts());
+        $this->assign('yScript',self::getYScripts());
         $this->display();
     }
-    
+
     /**
      *  创建图表
      */
-    public function doCreate(){
+    public function doCreate() {
         $post = I('post.');
         $post['token'] = md5(json_encode($post));
         $chart = M('chartList')->where(['token' => $post['token']])->find();
 
-        if($chart){
-            $this->ajaxReturn(self::createReturn(true,$chart));
-        }else{
+        if ($chart) {
+            $this->ajaxReturn(self::createReturn(true, $chart));
+        } else {
             $status = M('chartList')->data($post)->add();
-            if ($status > 0){
+            if ($status > 0) {
                 $post['id'] = $status;
-                $this->ajaxReturn(self::createReturn(true,$post));
-            }else{
+                $this->ajaxReturn(self::createReturn(true, $post));
+            } else {
                 $this->ajaxReturn(self::createReturn(false));
             }
         }
-        
+
+    }
+
+    /**
+     * 获取模型
+     * @return mixed
+     */
+    public function getModels(){
+        return M('model')->select();
+    }
+
+    /**
+     * 获取脚本
+     * @return array
+     */
+    public function getXScripts() {
+        $scriptDir = new \Dir(APP_PATH . '/Chart/Script/X');
+        $scriptList = $scriptDir->toArray();
+        $scripts = [];
+
+        //遍历模块
+        foreach ($scriptList as $item) {
+            $script_classname = str_replace('.class.php', '', $item['filename']);
+            $scripts[] = "\\Chart\\Script\\X\\" . $script_classname;
+        }
+
+        return $scripts;
+    }
+
+    /**
+     * 获取脚本
+     * @return array
+     */
+    public function getYScripts() {
+        $scriptDir = new \Dir(APP_PATH . '/Chart/Script/Y');
+        $scriptList = $scriptDir->toArray();
+        $scripts = [];
+
+        //遍历模块
+        foreach ($scriptList as $item) {
+            $script_classname = str_replace('.class.php', '', $item['filename']);
+            $scripts[] = "\\Chart\\Script\\Y\\" . $script_classname;
+        }
+
+        return $scripts;
+
     }
 
     /**
@@ -59,7 +104,7 @@ class IndexController extends AdminBase {
     /**
      * 图表预览
      */
-    public function previewer(){
+    public function previewer() {
         $get = I('get.');
 
         //设置 X 轴数据
@@ -67,7 +112,7 @@ class IndexController extends AdminBase {
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($get['table'], $get['x'], $get['y'], $get['y_type']);
+        $y_data = ChartService::getY($get['table'], $get['x'], $get['x_type'], $get['y'], $get['y_type']);
         $this->assign('y_data', $y_data);
 
         //设置图表大小
@@ -75,10 +120,10 @@ class IndexController extends AdminBase {
         $this->assign('size', $size);
 
         //设置图表标题
-        $this->assign('title',$get['title']);
+        $this->assign('title', $get['title']);
 
         //设置提示
-        $this->assign('tips',$get['tips']);
+        $this->assign('tips', $get['tips']);
 
         //判断图表显示类型
         self::showChart(I('get.type', '1'));
@@ -107,18 +152,18 @@ class IndexController extends AdminBase {
     /**
      * 获取图表列表
      */
-    public function getChartList(){
+    public function getChartList() {
         $chartList = M('chartList')->select();
-        $this->ajaxReturn(self::createReturn(true,$chartList));
+        $this->ajaxReturn(self::createReturn(true, $chartList));
     }
 
     /**
      * 获取表格的字段
      */
-    public function getTableFields(){
+    public function getTableFields() {
         $table = I('get.table');
         $model = M($table);
         $fields = $model->getDbFields();
-        $this->ajaxReturn(self::createReturn(true,$fields));
+        $this->ajaxReturn(self::createReturn(true, $fields));
     }
 }

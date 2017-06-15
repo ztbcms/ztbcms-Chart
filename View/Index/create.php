@@ -56,7 +56,9 @@
 
                 <select class="from-control" name="x" id="x_script" v-model="options.x" v-if="options.x_type == '__script'">
                     <option value="">请选择脚本</option>
-                    <option v-for="field in fields" :value="field">{{ field }}</option>
+                    <volist name="xScript" id="item">
+                        <option value="{$item}">{$item}</option>
+                    </volist>
                 </select>
 
             </div>
@@ -76,7 +78,9 @@
 
                 <select class="from-control" name="y" id="y_script" v-model="options.y" v-if="options.y_type == '__script'">
                     <option value="">请选择脚本</option>
-                    <option v-for="field in fields" :value="field">{{ field }}</option>
+                    <volist name="yScript" id="item">
+                        <option value="{$item}">{$item}</option>
+                    </volist>
                 </select>
 
             </div>

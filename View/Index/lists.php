@@ -35,7 +35,7 @@
         </tr>
         <tr v-for="item in list">
             <td>{{ item.id }}</td>
-            <td>{{ item.name }}</td>
+            <td>{{ item.title }}</td>
             <td>{{ item.token }}</td>
             <td>
                 <iframe :src="'{:U('Api/getChart')}&size=300*150&token=' + item.token"></iframe>

@@ -30,7 +30,7 @@ class ApiController extends Controller {
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['y'], $chart['y_type']);
+        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type']);
         $this->assign('y_data', $y_data);
 
         //设置图表大小
@@ -38,10 +38,10 @@ class ApiController extends Controller {
         $this->assign('size', $size);
 
         //设置图表标题
-        $this->assign('title',$chart['title']);
+        $this->assign('title', $chart['title']);
 
         //设置提示
-        $this->assign('tips',$chart['tips']);
+        $this->assign('tips', $chart['tips']);
 
         //判断图表显示类型
         self::showChart(I('get.type', '1'));
@@ -65,7 +65,7 @@ class ApiController extends Controller {
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['y'], $chart['y_type']);
+        $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type']);
         var_dump($y_data);
         $this->assign('y_data', $y_data);
 
@@ -75,10 +75,10 @@ class ApiController extends Controller {
         $this->assign('size', $size);
 
         //设置图表标题
-        $this->assign('title',$chart['title']);
+        $this->assign('title', $chart['title']);
 
         //设置提示
-        $this->assign('tips',$chart['tips']);
+        $this->assign('tips', $chart['tips']);
 
         //判断图表显示类型
         self::showChart(I('get.type', '1'));
