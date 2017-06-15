@@ -36,7 +36,7 @@ class IndexController extends AdminBase {
         $chart = M('chartList')->where(['token' => $post['token']])->find();
 
         if($chart){
-            $this->ajaxReturn(self::createReturn(false,$chart,'图表已存在！'));
+            $this->ajaxReturn(self::createReturn(true,$chart));
         }else{
             $status = M('chartList')->data($post)->add();
             if ($status > 0){
