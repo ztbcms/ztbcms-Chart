@@ -27,7 +27,7 @@
 <div id="app" class="container-fluid" style="margin-top: 2rem;">
     <form class="form">
         <div class="form-group">
-            <label class="form-label" for="">数据来源表</label>
+            <label class="form-label" for="">图表名称</label>
             <div class="row">
                 <div class="col-md-4">
                     <input class="form-control" type="text" name="title" v-model="options.title" id="title"
@@ -39,12 +39,16 @@
             <label class="form-label" for="">数据来源表</label>
             <div class="row">
                 <div class="col-md-4">
-                    <select class="form-control" name="table" id="table" v-model="options.table">
+                    <input class="form-control" type="text" v-model="options.table" v-if="other_table" placeholder="请填写表名，不带前缀">
+                    <select class="form-control" name="table" id="table" v-model="options.table" v-else>
                         <option value="">选择模型表</option>
                         <volist name="tables" id="table">
                             <option value="{$table['tablename']}">{$table[name]}</option>
                         </volist>
                     </select>
+                    <label for="other_table" style="margin-top: 5px;">
+                        <input type="checkbox" v-model="other_table" id="other_table">没有列出我需要的数据表，我需要手工填写
+                    </label>
                 </div>
             </div>
         </div>
@@ -148,6 +152,7 @@
             preview: false,
             previewUrl: '',
             fields: [],
+            other_table:false,
             width: '900',
             height: '400',
             options: {
@@ -198,6 +203,9 @@
                         that.fields = res.data;
                     }
                 }, 'json');
+            },
+            'other_table':function(){
+                this.options.table = "";
             }
         }
     })
