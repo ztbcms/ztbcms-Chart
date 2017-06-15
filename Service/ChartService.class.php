@@ -2,7 +2,12 @@
 
 namespace Chart\Service;
 
+use Think\Exception;
+
 class ChartService {
+
+    // 统计总数
+    const TYPE_COUNT = 'count';
 
     // 按字段统计
     const TYPE_FIELD = 'field';
@@ -14,17 +19,18 @@ class ChartService {
      * 获取 X 轴数据
      * @param $tableName string X轴数据获取表名
      * @param $x string 字段名
-     * @param string $x_type string 统计方式
+     * @param string $x_type 统计方式
+     * @param string $order 排序方式
      * @return array|string
      */
-    static function getX($tableName, $x, $x_type = 'field') {
+    static function getX($tableName, $x, $x_type = 'field', $order = 'id') {
         $x_data = [];
 
         $table = M($tableName);
 
         switch ($x_type) {
             case self::TYPE_FIELD:
-                $x_set = $table->field($x)->group($x)->order('id')->select();
+                $x_set = $table->field($x)->group($x)->order($order)->select();
                 foreach ($x_set as $item) {
                     $x_data[] = $item[$x];
                 }
@@ -34,14 +40,8 @@ class ChartService {
                 $sctipt = new $x();
                 $x_data = $sctipt->run();
                 break;
-            case 'year':
-                break;
-            case 'month':
-                break;
-            case 'week':
-                break;
-            case 'day':
-                break;
+            default:
+                throw_exception(new Exception('没有指定X轴筛选规则'));
         }
         return $x_data;
     }
@@ -53,9 +53,10 @@ class ChartService {
      * @param $x_type string X 轴类型
      * @param $y string Y 轴
      * @param string $y_type 统计方式
+     * @param string $order 排序方式
      * @return array|string
      */
-    static function getY($tableName, $x, $x_type, $y, $y_type = 'count') {
+    static function getY($tableName, $x, $x_type, $y, $y_type = 'count', $order = 'id') {
         $y_data = [];
 
         $table = M($tableName);
@@ -63,8 +64,8 @@ class ChartService {
         $x = static::getXField($x, $x_type);
 
         switch ($y_type) {
-            case 'count':
-                $sql = 'select count(' . $y . ') as db_count from ' . C('DB_PREFIX') . $tableName . ' group by ' . $x .' order by id';
+            case self::TYPE_COUNT:
+                $sql = 'select count(' . $y . ') as db_count from ' . C('DB_PREFIX') . $tableName . ' group by ' . $x . ' order by ' . $order;
                 $y_set = $table->query($sql);
                 foreach ($y_set as $item) {
                     $y_data[] = $item['db_count'];
@@ -75,13 +76,16 @@ class ChartService {
                 $sctipt = new $y();
                 $y_data = $sctipt->run();
                 break;
+            default:
+                throw_exception(new Exception('没有指定Y轴筛选规则'));
         }
 
         return $y_data;
     }
 
     /**
-     *
+     * 获取统计基准字段
+     * @return string
      */
     static function getXField($x, $x_type) {
         $field = '';
@@ -89,7 +93,7 @@ class ChartService {
             case self::TYPE_SCRIPT:
                 $class = new $x();
                 $field = $class->getField();
-            break;
+                break;
             case self::TYPE_FIELD:
                 $field = $x;
         }
