@@ -33,15 +33,22 @@ class ApiController extends Controller {
         $y_data = ChartService::getY($chart['table'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type'], $chart['filter'], $chart['order'], $chart['show_all']);
         $this->assign('y_data', $y_data);
 
-        //设置图表大小
-        $size = ChartService::getSize(I('get.size', '600*400'));
-        $this->assign('size', $size);
-
         //设置图表标题
         $this->assign('title', $chart['title']);
 
         //设置提示
         $this->assign('tips', $chart['tips']);
+
+        /**
+         * 路由参数
+         */
+
+        //设置图表大小
+        $size = ChartService::getSize(I('get.size', '600*400'));
+        $this->assign('size', $size);
+
+        //是否显示工具，默认不显示
+        $this->assign('tool',I('get.tool','0'));
 
         //判断图表显示类型
         self::showChart(I('get.type', '1'));

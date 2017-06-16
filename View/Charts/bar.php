@@ -49,6 +49,15 @@
                 type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
             }
         },
+        toolbox: {
+            show: {$tool},
+            feature: {
+                dataView: {},
+                saveAsImage: {
+                    pixelRatio: 2
+                }
+            }
+        },
         grid: {
             left: '3%',
             bottom: '10%',
