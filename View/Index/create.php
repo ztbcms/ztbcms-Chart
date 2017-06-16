@@ -29,7 +29,7 @@
         <div class="form-group">
             <label class="form-label" for="">图表名称</label>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input class="form-control" type="text" name="title" v-model="options.title" id="title"
                            placeholder="请输入图表名称">
                 </div>
@@ -38,15 +38,22 @@
         <div class="form-group">
             <label class="form-label" for="">数据来源表</label>
             <div class="row">
-                <div class="col-md-4">
-                    <input class="form-control" type="text" v-model="options.table" v-if="other_table" placeholder="请填写表名，不带前缀">
-                    <select class="form-control" name="table" id="table" v-model="options.table" v-else>
+                <div class="col-md-3">
+                    <input class="form-control" type="text" v-model="options.table" v-if="other_table"
+                           placeholder="请填写表名，不带前缀" @blur="getTableFields">
+                    <select class="form-control" name="table" id="table" v-model="options.table" v-else
+                            @change="getTableFields">
                         <option value="">选择模型表</option>
                         <volist name="tables" id="table">
                             <option value="{$table['tablename']}">{$table[name]}</option>
                         </volist>
                     </select>
-                    <label for="other_table" style="margin-top: 5px;">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="form-label" for="other_table" style="margin-top: 5px;">
                         <input type="checkbox" v-model="other_table" id="other_table">没有列出我需要的数据表，我需要手工填写
                     </label>
                 </div>
@@ -57,7 +64,7 @@
             <label class="form-label" for="">请选择统计基准（X 轴）</label>
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <select class="form-control" name="x_type" id="x_type" v-model="options.x_type">
                         <option value="">选择统计方式</option>
                         <option value="field">字段</option>
@@ -65,14 +72,14 @@
                     </select>
                 </div>
 
-                <div class="col-md-4" v-if="options.x_type == 'field'">
+                <div class="col-md-3" v-if="options.x_type == 'field'">
                     <select class="form-control" name="x" id="x_field" v-model="options.x">
                         <option value="">请选择字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
 
-                <div class="col-md-4" v-if="options.x_type == '__script'">
+                <div class="col-md-3" v-if="options.x_type == '__script'">
                     <select class="form-control" name="x" id="x_script" v-model="options.x">
                         <option value="">请选择脚本</option>
                         <volist name="xScript" id="item">
@@ -87,7 +94,7 @@
         <div class="form-group">
             <label class="form-label" for="">统计数（Y 轴）</label>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <select class="form-control" name="y_type" id="y_type" v-model="options.y_type">
                         <option value="">选择统计方式</option>
                         <option value="count">字段（计数总数）</option>
@@ -95,16 +102,15 @@
                     </select>
                 </div>
 
-                <div class="col-md-4" v-if="options.y_type == 'count'">
+                <div class="col-md-3" v-if="options.y_type == 'count'">
                     <select class="form-control" name="y" id="y_field" v-model="options.y">
                         <option value="">请选择字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
 
-                <div class="col-md-4" v-if="options.y_type == '__script'">
-                    <select class="form-control" name="y" id="y_script" v-model="options.y"
-                    >
+                <div class="col-md-3" v-if="options.y_type == '__script'">
+                    <select class="form-control" name="y" id="y_script" v-model="options.y">
                         <option value="">请选择脚本</option>
                         <volist name="yScript" id="item">
                             <option value="{$item}">{$item}</option>
@@ -115,10 +121,56 @@
 
         </div>
 
+        <div class="form-group" v-if="options.y_type == 'count'">
+            <label class="form-label" for="">字段筛选</label>
+            <div class="row">
+                <div class="col-md-2">
+                    <select class="form-control" name="filter" id="filter" v-model="options.filter">
+                        <option value="">请选择字段</option>
+                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select class="form-control" name="filter_operator" id="filter_operator"
+                            v-model="options.filter_operator">
+                        <option value="">请选择筛选方式</option>
+                        <option value="EQ">等于</option>
+                        <option value="NEQ">不等于</option>
+                        <option value="GT">大于</option>
+                        <option value="GET">大于等于</option>
+                        <option value="LT">小于</option>
+                        <option value="LET">小于等于</option>
+                        <option value="BETWEEN">介于</option>
+                        <option value="IS NULL">为 null</option>
+                        <option value="IS NOT NULL">不为 null</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2" v-if="!/IS/.test(options.filter_operator)">
+                    <input class="form-control" type="text" name="filter_value" id="filter_value"
+                           v-model="options.filter_value"
+                           :placeholder="options.filter_operator == 'BETWEEN'?'以 , 分隔的两个筛选值':'请输入筛选值'"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group" v-if="options.y_type == 'count'">
+            <label class="form-label" for="">是否展示所有数据（补0）</label>
+            <div class="row">
+                <div class="col-md-2">
+                    <select class="form-control" name="show_all" id="show_all" v-model="options.show_all">
+                        <option value="1">是</option>
+                        <option value="0">否</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="form-label" for="">鼠标悬浮提示</label>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="text" class="form-control" name="tips" id="tips" v-model="options.tips"
                            placeholder="请输入图表悬浮提示">
                 </div>
@@ -128,7 +180,7 @@
         <div class="form-group">
             <label class="form-label" for="">排序方式</label>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="text" class="form-control" name="order" id="order" v-model="options.order"
                            placeholder="请输入排序方式">
                 </div>
@@ -162,7 +214,7 @@
             preview: false,
             previewUrl: '',
             fields: [],
-            other_table:false,
+            other_table: false,
             width: '900',
             height: '400',
             options: {
@@ -173,11 +225,26 @@
                 y: '',
                 y_type: '',
                 tips: '',
-                order:'id'
+                order: 'id',
+                filter: '',
+                filter_operator: '',
+                filter_value: '',
+                show_all: '1'
             },
             url: ''
         },
         methods: {
+            getTableFields: function () {
+                let that = this;
+                let data = {
+                    table: this.options.table
+                };
+                $.get("{:U('Index/getTableFields')}", data, function (res) {
+                    if (res.status) {
+                        that.fields = res.data;
+                    }
+                }, 'json');
+            },
             getUrl: function () {
                 let url = this.base;
                 for (let i in this.options) {
@@ -204,18 +271,7 @@
             }
         },
         watch: {
-            "options.table": function () {
-                let that = this;
-                let data = {
-                    table: this.options.table
-                };
-                $.get("{:U('Index/getTableFields')}", data, function (res) {
-                    if (res.status) {
-                        that.fields = res.data;
-                    }
-                }, 'json');
-            },
-            'other_table':function(){
+            'other_table': function () {
                 this.options.table = "";
             }
         }
