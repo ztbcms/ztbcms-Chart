@@ -12,5 +12,6 @@ CREATE TABLE `cms_chart_list` (
   `order`   VARCHAR(255)  NOT NULL DEFAULT 'id' COMMENT '排序方式',
   `filter`  VARCHAR(255)  DEFAULT '' COMMENT '可供选择的过滤器',
   `tips`    VARCHAR(255)  DEFAULT '' COMMENT '提示信息',
+  `show_all` TINYINT DEFAULT '1' COMMENT '是否显示所有数据（包含0）',
   PRIMARY KEY (`id`)
 )ENGINE = InnoDB DEFAULT CHARSET = utf8;

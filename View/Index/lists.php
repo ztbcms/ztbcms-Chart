@@ -44,6 +44,7 @@
                 <iframe :src="'{:U('Api/getChart')}&size=300*150&token=' + item.token"></iframe>
             </td>
             <td>
+                <a :href="'{:U('Api/getChart')}&size=cover&token=' + item.token" type="_blank" class="btn btn-info">查看大图</a>
                 <button class="btn btn-danger" @click="del(item)">删除</button>
             </td>
         </tr>

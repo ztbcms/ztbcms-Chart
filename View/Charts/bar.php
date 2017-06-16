@@ -22,11 +22,17 @@
 
     <script src="https://cdn.bootcss.com/echarts/3.6.1/echarts.common.min.js"></script>
 
+    <style>
+        html,body{
+            height: 100%;
+            width:100%;
+        }
+    </style>
 </head>
 <body>
 
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-<div id="main" style="width: {$size[width]}px;height:{$size[height]}px;"></div>
+<div id="main" style="width: {$size[width]};height:{$size[height]};"></div>
 
 <script>
     // 基于准备好的dom，初始化echarts实例

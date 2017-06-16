@@ -33,6 +33,8 @@ class IndexController extends AdminBase {
      */
     public function doCreate() {
         $post = I('post.');
+        //获取额外的字段筛选条件
+        $post['filter'] = ChartService::getXFilter($post['filter'], $post['filter_operator'], $post['filter_value']);
         $post['token'] = md5(json_encode($post));
         $chart = M('chartList')->where(['token' => $post['token']])->find();
 
@@ -111,12 +113,15 @@ class IndexController extends AdminBase {
     public function previewer() {
         $get = I('get.');
 
+        //获取额外的字段筛选条件
+        $filter = ChartService::getXFilter($get['filter'], $get['filter_operator'], $get['filter_value']);
+
         //设置 X 轴数据
-        $x_data = ChartService::getX($get['table'], $get['x'], $get['x_type'],$get['order']);
+        $x_data = ChartService::getX($get['table'], $get['x'], $get['x_type'], $filter, $get['order'], $get['show_all']);
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($get['table'], $get['x'], $get['x_type'], $get['y'], $get['y_type'],$get['order']);
+        $y_data = ChartService::getY($get['table'], $get['x'], $get['x_type'], $get['y'], $get['y_type'], $filter, $get['order'], $get['show_all']);
         $this->assign('y_data', $y_data);
 
         //设置图表大小
