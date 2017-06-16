@@ -162,8 +162,14 @@ class IndexController extends AdminBase {
      * 获取图表列表
      */
     public function getChartList() {
-        $chartList = M('chartList')->select();
-        $this->ajaxReturn(self::createReturn(true, $chartList));
+        $page = I('request.page','1');
+        $limit = I('request.limit','20');
+        $chartList = M('chartList')->page($page,$limit)->select();
+        if ($chartList){
+            $this->ajaxReturn(self::createReturn(true, $chartList));
+        }else{
+            $this->ajaxReturn(self::createReturn(false));
+        }
     }
 
     /**
