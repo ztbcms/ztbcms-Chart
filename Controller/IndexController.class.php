@@ -131,6 +131,9 @@ class IndexController extends AdminBase {
         //设置图表标题
         $this->assign('title', $get['title']);
 
+        //预览不显示工具
+        $this->assign('tool', 0);
+
         //设置提示
         $this->assign('tips', $get['tips']);
 
@@ -162,12 +165,12 @@ class IndexController extends AdminBase {
      * 获取图表列表
      */
     public function getChartList() {
-        $page = I('request.page','1');
-        $limit = I('request.limit','20');
-        $chartList = M('chartList')->page($page,$limit)->select();
-        if ($chartList){
+        $page = I('request.page', '1');
+        $limit = I('request.limit', '20');
+        $chartList = M('chartList')->page($page, $limit)->select();
+        if ($chartList) {
             $this->ajaxReturn(self::createReturn(true, $chartList));
-        }else{
+        } else {
             $this->ajaxReturn(self::createReturn(false));
         }
     }
