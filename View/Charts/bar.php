@@ -40,7 +40,8 @@
 
     option = {
         title: {
-            text: '{$title}'
+            text: '{$title}',
+            subtext:"{$subtext}"
         },
         color: ['#3398DB'],
         tooltip: {
