@@ -50,11 +50,12 @@ class ApiController extends Controller {
 
     /**
      * @param array $chart 图表记录
+     * @param bool $focusUpdate 是否强制重新统计
      */
-    protected function getData($chart) {
+    protected function getData($chart, $focusUpdate = false) {
 
         //如果开启了缓存
-        if ($chart['cache']) {
+        if (!$focusUpdate && $chart['cache']) {
             //检查缓存是否有效
             $now = time();
             $exp = strtotime("+ " . $chart['cache'] . " minute", $chart['cache_time']);
@@ -84,6 +85,8 @@ class ApiController extends Controller {
 
             M('chartList')->data($chart)->save();
         }
+
+        $this->assign('subtext', "更新于" . date('Y-m-d H:i:s', time()));
     }
 
     /**
@@ -96,6 +99,23 @@ class ApiController extends Controller {
         $this->assign('x_data', $data['x']);
         $this->assign('y_data', $data['y']);
         $this->assign('subtext', "更新于" . date('Y-m-d H:i:s', $chart['cache_time']));
+    }
+
+    /**
+     * 手动更新缓存
+     */
+    public function updateCache() {
+        //获取图表标识
+        $token = I('get.token');
+
+        $chart = M('chartList')->where(['token' => $token])->find();
+        if (empty($chart)) {
+            exit("图表不存在！");
+        }
+
+        self::getData($chart, true);
+
+        $this->ajaxReturn(createReturn(true));
     }
 
     /**
