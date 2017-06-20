@@ -24,7 +24,9 @@ class IndexController extends AdminBase {
     public function create() {
         $this->assign('tables', self::getModels());
         $this->assign('xScript', self::getXScripts());
+        $this->assign('xType', self::getXTypes());
         $this->assign('yScript', self::getYScripts());
+        $this->assign('yType', self::getYTypes());
         $this->display();
     }
 
@@ -56,7 +58,7 @@ class IndexController extends AdminBase {
      * 获取模型
      * @return mixed
      */
-    public function getModels() {
+    protected function getModels() {
         return M('model')->select();
     }
 
@@ -64,7 +66,7 @@ class IndexController extends AdminBase {
      * 获取脚本
      * @return array
      */
-    public function getXScripts() {
+    protected function getXScripts() {
         $scriptDir = new \Dir(APP_PATH . '/Chart/Script/X');
         $scriptList = $scriptDir->toArray();
         $scripts = [];
@@ -78,11 +80,15 @@ class IndexController extends AdminBase {
         return $scripts;
     }
 
+    protected function getXTypes(){
+        return ChartModel::X_TYPE;
+    }
+
     /**
      * 获取脚本
      * @return array
      */
-    public function getYScripts() {
+    protected function getYScripts() {
         $scriptDir = new \Dir(APP_PATH . '/Chart/Script/Y');
         $scriptList = $scriptDir->toArray();
         $scripts = [];
@@ -95,6 +101,10 @@ class IndexController extends AdminBase {
 
         return $scripts;
 
+    }
+
+    protected function getYTypes(){
+        return ChartModel::Y_TYPE;
     }
 
     /**

@@ -67,19 +67,20 @@
                 <div class="col-md-3">
                     <select class="form-control" name="x_type" id="x_type" v-model="options.x_type">
                         <option value="">选择统计方式</option>
-                        <option value="field">字段</option>
-                        <option value="__script">脚本</option>
+                        <volist name="xType" id="item">
+                            <option value="{$key}">{$item}</option>
+                        </volist>
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.x_type == 'field'">
+                <div class="col-md-3" v-if="options.x_type.toUpperCase() == '__FIELD'">
                     <select class="form-control" name="x" id="x_field" v-model="options.x">
                         <option value="">请选择字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.x_type == '__script'">
+                <div class="col-md-3" v-if="options.x_type.toUpperCase() == '__SCRIPT'">
                     <select class="form-control" name="x" id="x_script" v-model="options.x">
                         <option value="">请选择脚本</option>
                         <volist name="xScript" id="item">
@@ -97,19 +98,20 @@
                 <div class="col-md-3">
                     <select class="form-control" name="y_type" id="y_type" v-model="options.y_type">
                         <option value="">选择统计方式</option>
-                        <option value="count">字段（计数总数）</option>
-                        <option value="__script">脚本</option>
+                        <volist name="yType" id="item">
+                            <option value="{$key}">{$item}</option>
+                        </volist>
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.y_type != '__script'">
+                <div class="col-md-3" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
                     <select class="form-control" name="y" id="y_field" v-model="options.y">
                         <option value="">请选择字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.y_type == '__script'">
+                <div class="col-md-3" v-if="options.y_type.toUpperCase() == '__SCRIPT'">
                     <select class="form-control" name="y" id="y_script" v-model="options.y">
                         <option value="">请选择脚本</option>
                         <volist name="yScript" id="item">
@@ -121,7 +123,7 @@
 
         </div>
 
-        <div class="form-group" v-if="options.y_type != '__script'">
+        <div class="form-group" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
             <label class="form-label" for="">筛选条件</label>
             <div class="row">
                 <div class="col-md-2">
@@ -147,10 +149,10 @@
                     </select>
                 </div>
 
-                <div class="col-md-2" v-if="!/IS/.test(options.filter_operator)">
+                <div class="col-md-2" v-if="!/NULL/.test(filter_operator)">
                     <input class="form-control" type="text" name="filter_value" id="filter_value"
                            v-model="filter_value"
-                           :placeholder="options.filter_operator == 'BETWEEN'?'以 , 分隔的两个筛选值':'请输入筛选值'"/>
+                           :placeholder="filter_operator.toUpperCase() == 'BETWEEN'?'以 , 分隔的两个筛选值':'请输入筛选值'"/>
                 </div>
 
                 <div class="col-md-2">
@@ -158,7 +160,7 @@
                 </div>
             </div>
 
-            <div class="row" v-if="Object.keys(options.filter).length > 1">
+            <div class="row" v-if="Object.keys(filter.field).length > 1">
                 <br>
                 <div class="col-md-6">
                     <table class="table">
@@ -168,11 +170,11 @@
                             <th>筛选值</th>
                             <th>操作</th>
                         </tr>
-                        <tr v-for="(filter,index) in options.filter" :filter="filter" :index="index"
+                        <tr v-for="(field,index) in filter.field" :index="index"
                             v-if="index != 'during'">
                             <td>{{ index }}</td>
-                            <td>{{ options.filter_operator[index] }}</td>
-                            <td>{{ options.filter_value[index] }}</td>
+                            <td>{{ filter.operator[index] }}</td>
+                            <td>{{ filter.value[index] }}</td>
                             <td>
                                 <button class="btn btn-warning" type="button" @click="delFilter(index)">删除</button>
                             </td>
@@ -183,18 +185,18 @@
 
         </div>
 
-        <div class="form-group" v-if="options.y_type != '__script'">
+        <div class="form-group" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
             <label class="form-label" for="">时间段</label>
             <div class="row">
                 <div class="col-md-2">
-                    <select class="form-control" name="show_all" id="show_all" v-model="options.filter.during">
+                    <select class="form-control" name="show_all" id="show_all" v-model="filter.field.during">
                         <option value="during">请选择时间字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
 
                 <div class="col-md-2">
-                    <select class="form-control" name="show_all" id="show_all" v-model="options.filter_value.during">
+                    <select class="form-control" name="show_all" id="show_all" v-model="filter.value.during">
                         <option value="">请选择时间段</option>
                         <option value="3">最近3天</option>
                         <option value="7">最近7天</option>
@@ -207,7 +209,7 @@
             </div>
         </div>
 
-        <div class="form-group" v-if="options.y_type != '__script'">
+        <div class="form-group" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
             <label class="form-label" for="">是否显示结果为0的列</label>
             <div class="row">
                 <div class="col-md-2">
@@ -282,6 +284,11 @@
             filter_field: "",
             filter_operator: "",
             filter_value: "",
+            filter:{
+                field: {during: 'during'},
+                operator: {during: 'BETWEEN'},
+                value: {during: ''},
+            },
             options: {
                 title: '',
                 table: '',
@@ -291,9 +298,6 @@
                 y_type: '',
                 tips: '',
                 order: 'id',
-                filter: {during: 'during'},
-                filter_operator: {during: 'BETWEEN'},
-                filter_value: {during: ''},
                 show_all: '1',
                 cache: 0,
             },
@@ -302,9 +306,9 @@
         methods: {
             addFilter: function () {
                 //赋值
-                this.options.filter[this.filter_field] = this.filter_field;
-                this.options.filter_operator[this.filter_field] = this.filter_operator;
-                this.options.filter_value[this.filter_field] = this.filter_value;
+                this.filter.field[this.filter_field] = this.filter_field;
+                this.filter.operator[this.filter_field] = this.filter_operator;
+                this.filter.value[this.filter_field] = this.filter_value;
 
                 //重置选项
                 this.filter_field = "";
@@ -314,24 +318,24 @@
             },
             delFilter:function(index){
                 //删除对应值
-                delete this.options.filter[index];
-                delete this.options.filter_operator[index];
-                delete this.options.filter_value[index];
+                delete this.filter.field[index];
+                delete this.filter.operator[index];
+                delete this.filter.value[index];
 
                 //复制对象
-                let filter = this.options.filter;
-                let filter_operator = this.options.filter_operator;
-                let filter_value = this.options.filter_value;
+                let field = this.filter.field;
+                let operator = this.filter.operator;
+                let value = this.filter.value;
 
                 //重置vue对象值
-                this.options.filter = null;
-                this.options.filter_operator = null;
-                this.options.filter_value = null;
+                this.filter.field = null;
+                this.filter.operator = null;
+                this.filter.value = null;
 
                 //重新赋值
-                this.options.filter = filter;
-                this.options.filter_operator = filter_operator;
-                this.options.filter_value = filter_value;
+                this.filter.field = field;
+                this.filter.operator = operator;
+                this.filter.value = value;
             },
             getTableFields: function () {
                 let that = this;
