@@ -124,7 +124,7 @@ class IndexController extends AdminBase {
         $get = I('get.');
 
         //获取额外的字段筛选条件
-        $filter = ChartService::getXFilter($get['filter'], $get['filter_operator'], $get['filter_value']);
+        $filter = ChartService::getXFilter($get['filter'], $get['operator'], $get['value']);
 
         //设置 X 轴数据
         $x_data = ChartService::getX($get['table'], $get['x'], $get['x_type'], $filter, $get['order'], $get['show_all']);

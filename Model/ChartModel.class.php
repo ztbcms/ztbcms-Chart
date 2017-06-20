@@ -1,9 +1,10 @@
 <?php
+
 namespace Chart\Model;
 
 use Think\Model;
 
-class ChartModel extends Model{
+class ChartModel extends Model {
     /**
      * 柱状图
      */
@@ -30,7 +31,7 @@ class ChartModel extends Model{
      */
     const Y_TYPE = [
         '__COUNT' => '字段计数',
-        '__AMOUNT' => '求和',
+        '__SUM' => '求和',
         '__AVG' => '平均值',
         '__MAX' => '最大值',
         '__MIN' => '最小值',
@@ -39,4 +40,19 @@ class ChartModel extends Model{
 
     // 默认像素单位
     const DEFAULT_PIXEL = 'px';
+
+    /**
+     * 时间段
+     */
+    const DURING = [
+        '__L3' => '最近3天',
+        '__L7' => '最近7天',
+        '__L15' => '最近15天',
+        '__L30' => '最近30天',
+        '__L365' => '最近一年',
+        '__DAY' => '按日',
+        '__WEEK' => '按周',
+        '__MONTH' => '按月',
+        '__YEAR' => '按年',
+    ];
 }

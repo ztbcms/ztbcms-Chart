@@ -284,7 +284,7 @@
             filter_field: "",
             filter_operator: "",
             filter_value: "",
-            filter:{
+            filter: {
                 field: {during: 'during'},
                 operator: {during: 'BETWEEN'},
                 value: {during: ''},
@@ -316,7 +316,7 @@
                 this.filter_value = "";
 
             },
-            delFilter:function(index){
+            delFilter: function (index) {
                 //删除对应值
                 delete this.filter.field[index];
                 delete this.filter.operator[index];
@@ -350,10 +350,22 @@
             },
             getUrl: function () {
                 let url = this.base;
+                //获取配置
                 for (let i in this.options) {
                     url += '&' + i + '=' + this.options[i];
                 }
+                //获取大小设置
                 url += '&size=' + this.width + '*' + this.height;
+                //获取筛选条件
+                let where = '';
+                for (let i in this.filter.field) {
+                    if (this.filter.value[i] !== '') {
+                        where += '&filter[' + i + ']=' + i;
+                        where += '&operator[' + i + ']=' + this.filter.operator[i];
+                        where += '&value[' + i + ']=' + this.filter.value[i];
+                    }
+                }
+                url += where;
 
                 return url;
             },

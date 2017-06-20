@@ -97,8 +97,10 @@ class ChartService {
                 $filter .= self::concatFilter($v, $operators[$k], $values[$k]);
             }
             return $filter;
-        } else {
+        } elseif (!empty($filter)) {
             return self::concatFilter($fields, $operators, $values);
+        }else{
+            return '';
         }
     }
 
