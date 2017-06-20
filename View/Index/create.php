@@ -154,24 +154,28 @@
                 </div>
 
                 <div class="col-md-2">
-                    <button type="button" @click="addFilter">添加</button>
+                    <button class="btn btn-info" type="button" @click="addFilter">添加</button>
                 </div>
             </div>
 
-            <br>
-
             <div class="row" v-if="Object.keys(options.filter).length > 1">
+                <br>
                 <div class="col-md-6">
                     <table class="table">
                         <tr>
                             <th>字段</th>
                             <th>筛选条件</th>
                             <th>筛选值</th>
+                            <th>操作</th>
                         </tr>
-                        <tr v-for="(filter,index) in options.filter" :filter="filter" :index="index" v-if="index != 'during'">
+                        <tr v-for="(filter,index) in options.filter" :filter="filter" :index="index"
+                            v-if="index != 'during'">
                             <td>{{ index }}</td>
                             <td>{{ options.filter_operator[index] }}</td>
                             <td>{{ options.filter_value[index] }}</td>
+                            <td>
+                                <button class="btn btn-warning" type="button" @click="delFilter(index)">删除</button>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -287,15 +291,9 @@
                 y_type: '',
                 tips: '',
                 order: 'id',
-                filter: {
-                    during: 'during',
-                },
-                filter_operator: {
-                    during: 'BETWEEN'
-                },
-                filter_value: {
-                    during: ''
-                },
+                filter: {during: 'during'},
+                filter_operator: {during: 'BETWEEN'},
+                filter_value: {during: ''},
                 show_all: '1',
                 cache: 0,
             },
@@ -313,6 +311,27 @@
                 this.filter_operator = "";
                 this.filter_value = "";
 
+            },
+            delFilter:function(index){
+                //删除对应值
+                delete this.options.filter[index];
+                delete this.options.filter_operator[index];
+                delete this.options.filter_value[index];
+
+                //复制对象
+                let filter = this.options.filter;
+                let filter_operator = this.options.filter_operator;
+                let filter_value = this.options.filter_value;
+
+                //重置vue对象值
+                this.options.filter = null;
+                this.options.filter_operator = null;
+                this.options.filter_value = null;
+
+                //重新赋值
+                this.options.filter = filter;
+                this.options.filter_operator = filter_operator;
+                this.options.filter_value = filter_value;
             },
             getTableFields: function () {
                 let that = this;
