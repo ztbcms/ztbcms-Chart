@@ -61,7 +61,7 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label" for="">请选择统计基准（X 轴）</label>
+            <label class="form-label" for="">分组依据（X 轴）</label>
 
             <div class="row">
                 <div class="col-md-3">
@@ -92,7 +92,7 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label" for="">统计数（Y 轴）</label>
+            <label class="form-label" for="">统计方式（Y 轴）</label>
             <div class="row">
                 <div class="col-md-3">
                     <select class="form-control" name="y_type" id="y_type" v-model="options.y_type">
@@ -102,7 +102,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.y_type == 'count'">
+                <div class="col-md-3" v-if="options.y_type != '__script'">
                     <select class="form-control" name="y" id="y_field" v-model="options.y">
                         <option value="">请选择字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
@@ -121,19 +121,19 @@
 
         </div>
 
-        <div class="form-group" v-if="options.y_type == 'count'">
-            <label class="form-label" for="">字段筛选</label>
+        <div class="form-group" v-if="options.y_type != '__script'">
+            <label class="form-label" for="">筛选条件</label>
             <div class="row">
                 <div class="col-md-2">
-                    <select class="form-control" name="filter" id="filter" v-model="options.filter">
-                        <option value="">请选择字段</option>
+                    <select class="form-control" name="filter_field" id="filter_field" v-model="filter_field">
+                        <option value="">请选择统计方式</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
 
                 <div class="col-md-2">
                     <select class="form-control" name="filter_operator" id="filter_operator"
-                            v-model="options.filter_operator">
+                            v-model="filter_operator">
                         <option value="">请选择筛选方式</option>
                         <option value="EQ">等于</option>
                         <option value="NEQ">不等于</option>
@@ -149,14 +149,62 @@
 
                 <div class="col-md-2" v-if="!/IS/.test(options.filter_operator)">
                     <input class="form-control" type="text" name="filter_value" id="filter_value"
-                           v-model="options.filter_value"
+                           v-model="filter_value"
                            :placeholder="options.filter_operator == 'BETWEEN'?'以 , 分隔的两个筛选值':'请输入筛选值'"/>
                 </div>
+
+                <div class="col-md-2">
+                    <button type="button" @click="addFilter">添加</button>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row" v-if="Object.keys(options.filter).length > 1">
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                            <th>字段</th>
+                            <th>筛选条件</th>
+                            <th>筛选值</th>
+                        </tr>
+                        <tr v-for="(filter,index) in options.filter" :filter="filter" :index="index" v-if="index != 'during'">
+                            <td>{{ index }}</td>
+                            <td>{{ options.filter_operator[index] }}</td>
+                            <td>{{ options.filter_value[index] }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group" v-if="options.y_type != '__script'">
+            <label class="form-label" for="">时间段</label>
+            <div class="row">
+                <div class="col-md-2">
+                    <select class="form-control" name="show_all" id="show_all" v-model="options.filter.during">
+                        <option value="during">请选择时间字段</option>
+                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select class="form-control" name="show_all" id="show_all" v-model="options.filter_value.during">
+                        <option value="">请选择时间段</option>
+                        <option value="3">最近3天</option>
+                        <option value="7">最近7天</option>
+                        <option value="15">最近15天</option>
+                        <option value="30">最近30天</option>
+                        <option value="365">最近一年</option>
+                    </select>
+                </div>
+
             </div>
         </div>
 
-        <div class="form-group" v-if="options.y_type == 'count'">
-            <label class="form-label" for="">是否展示所有数据（补0）</label>
+        <div class="form-group" v-if="options.y_type != '__script'">
+            <label class="form-label" for="">是否显示结果为0的列</label>
             <div class="row">
                 <div class="col-md-2">
                     <select class="form-control" name="show_all" id="show_all" v-model="options.show_all">
@@ -183,6 +231,16 @@
                 <div class="col-md-3">
                     <input type="text" class="form-control" name="order" id="order" v-model="options.order"
                            placeholder="请输入排序方式">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="">是否使用缓存（单位：分钟，0表示不缓存）</label>
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="cache" id="cache" v-model="options.cache"
+                           placeholder="请输入缓存时间">
                 </div>
             </div>
         </div>
@@ -217,6 +275,9 @@
             other_table: false,
             width: '900',
             height: '400',
+            filter_field: "",
+            filter_operator: "",
+            filter_value: "",
             options: {
                 title: '',
                 table: '',
@@ -226,14 +287,33 @@
                 y_type: '',
                 tips: '',
                 order: 'id',
-                filter: '',
-                filter_operator: '',
-                filter_value: '',
-                show_all: '1'
+                filter: {
+                    during: 'during',
+                },
+                filter_operator: {
+                    during: 'BETWEEN'
+                },
+                filter_value: {
+                    during: ''
+                },
+                show_all: '1',
+                cache: 0,
             },
             url: ''
         },
         methods: {
+            addFilter: function () {
+                //赋值
+                this.options.filter[this.filter_field] = this.filter_field;
+                this.options.filter_operator[this.filter_field] = this.filter_operator;
+                this.options.filter_value[this.filter_field] = this.filter_value;
+
+                //重置选项
+                this.filter_field = "";
+                this.filter_operator = "";
+                this.filter_value = "";
+
+            },
             getTableFields: function () {
                 let that = this;
                 let data = {
