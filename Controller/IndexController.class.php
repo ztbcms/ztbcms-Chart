@@ -24,7 +24,9 @@ class IndexController extends AdminBase {
     public function create() {
         $this->assign('tables', self::getModels());
         $this->assign('xScript', self::getXScripts());
+        $this->assign('xType', self::getXTypes());
         $this->assign('yScript', self::getYScripts());
+        $this->assign('yType', self::getYTypes());
         $this->display();
     }
 
@@ -56,7 +58,7 @@ class IndexController extends AdminBase {
      * 获取模型
      * @return mixed
      */
-    public function getModels() {
+    protected function getModels() {
         return M('model')->select();
     }
 
@@ -64,7 +66,7 @@ class IndexController extends AdminBase {
      * 获取脚本
      * @return array
      */
-    public function getXScripts() {
+    protected function getXScripts() {
         $scriptDir = new \Dir(APP_PATH . '/Chart/Script/X');
         $scriptList = $scriptDir->toArray();
         $scripts = [];
@@ -78,11 +80,15 @@ class IndexController extends AdminBase {
         return $scripts;
     }
 
+    protected function getXTypes(){
+        return ChartModel::X_TYPE;
+    }
+
     /**
      * 获取脚本
      * @return array
      */
-    public function getYScripts() {
+    protected function getYScripts() {
         $scriptDir = new \Dir(APP_PATH . '/Chart/Script/Y');
         $scriptList = $scriptDir->toArray();
         $scripts = [];
@@ -95,6 +101,10 @@ class IndexController extends AdminBase {
 
         return $scripts;
 
+    }
+
+    protected function getYTypes(){
+        return ChartModel::Y_TYPE;
     }
 
     /**
@@ -114,7 +124,7 @@ class IndexController extends AdminBase {
         $get = I('get.');
 
         //获取额外的字段筛选条件
-        $filter = ChartService::getXFilter($get['filter'], $get['filter_operator'], $get['filter_value']);
+        $filter = ChartService::getXFilter($get['filter'], $get['operator'], $get['value']);
 
         //设置 X 轴数据
         $x_data = ChartService::getX($get['table'], $get['x'], $get['x_type'], $filter, $get['order'], $get['show_all']);
@@ -130,6 +140,9 @@ class IndexController extends AdminBase {
 
         //设置图表标题
         $this->assign('title', $get['title']);
+
+        //预览不显示工具
+        $this->assign('tool', 0);
 
         //设置提示
         $this->assign('tips', $get['tips']);
@@ -162,8 +175,14 @@ class IndexController extends AdminBase {
      * 获取图表列表
      */
     public function getChartList() {
-        $chartList = M('chartList')->select();
-        $this->ajaxReturn(self::createReturn(true, $chartList));
+        $page = I('request.page', '1');
+        $limit = I('request.limit', '20');
+        $chartList = M('chartList')->page($page, $limit)->select();
+        if ($chartList) {
+            $this->ajaxReturn(self::createReturn(true, $chartList));
+        } else {
+            $this->ajaxReturn(self::createReturn(false));
+        }
     }
 
     /**
