@@ -94,7 +94,14 @@ class ChartService {
         if (is_array($fields)) {
             $filter = '';
             foreach ($fields as $k => $v) {
-                $filter .= self::concatFilter($v, $operators[$k], $values[$k]);
+                if(!empty($values[$k])){
+                    //对时间段筛选进行特殊处理
+                    if ($k === 'during'){
+                        $today = mktime(0,0,0,date('m'),date('d') + 1,date('y'));
+                        $values[$k] = strtotime('- ' . $values[$k] . ' day',$today) . ' AND ' . $today;
+                    }
+                    $filter .= self::concatFilter($v, $operators[$k], $values[$k]);
+                }
             }
             return $filter;
         } elseif (!empty($filter)) {
@@ -117,6 +124,9 @@ class ChartService {
             case 'IS NULL':
             case 'IS NOT NULL':
                 $filter = $field . ' ' . $operator;
+                break;
+            case 'BETWEEN':
+                $filter = $field . ' ' . $operator . ' ' . $value;
                 break;
             default:
                 $filter = $field . ' ' . $operator . ' \'' . $value . '\'';

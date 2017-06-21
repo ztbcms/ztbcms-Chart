@@ -73,7 +73,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.x_type.toUpperCase() == '__FIELD'">
+                <div class="col-md-3" v-if="options.x_type.toUpperCase() !== '__SCRIPT'">
                     <select class="form-control" name="x" id="x_field" v-model="options.x">
                         <option value="">请选择字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
@@ -189,7 +189,7 @@
             <label class="form-label" for="">时间段</label>
             <div class="row">
                 <div class="col-md-2">
-                    <select class="form-control" name="show_all" id="show_all" v-model="filter.field.during">
+                    <select class="form-control" name="during" id="during" v-model="filter.field.during">
                         <option value="during">请选择时间字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
@@ -360,7 +360,7 @@
                 let where = '';
                 for (let i in this.filter.field) {
                     if (this.filter.value[i] !== '') {
-                        where += '&filter[' + i + ']=' + i;
+                        where += '&filter[' + i + ']=' + this.filter.field[i];
                         where += '&operator[' + i + ']=' + this.filter.operator[i];
                         where += '&value[' + i + ']=' + this.filter.value[i];
                     }
