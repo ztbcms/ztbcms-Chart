@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `jsq_chart_list`;
 
-CREATE TABLE `jsq_chart_list` (
+CREATE TABLE `cms_chart_list` (
   `id`      INT(11)       NOT NULL COMMENT 'ID' AUTO_INCREMENT,
   `title`   VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '图表名称',
   `token`   VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '图表唯一标识',
