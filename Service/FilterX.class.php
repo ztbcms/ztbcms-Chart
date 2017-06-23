@@ -8,16 +8,18 @@ class FilterX {
 
     /**
      * 按字段统计
-     * @param $tableName
-     * @param $time_field
-     * @param $x
+     *
+     * @param        $tableName
+     * @param        $time_field
+     * @param        $time_section
+     * @param        $x
      * @param string $x_type
      * @param string $filter
      * @param string $order
-     * @param bool $showAll
+     * @param bool   $showAll
      * @return string
      */
-    public function __FIELD($tableName, $time_field, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
+    public function __FIELD($tableName, $time_field, $time_section, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
         $x_data = [];
 
         $table = M($tableName);
