@@ -6,6 +6,7 @@ CREATE TABLE `cms_chart_list` (
   `token`   VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '图表唯一标识',
   `table`   VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '统计表',
   `time_field` VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '时间字段',
+  `time_section` VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '时间区间',
   `x`       VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'X 轴筛选字段',
   `x_type`  VARCHAR(255)  NOT NULL DEFAULT 'field' COMMENT 'X 轴筛选类型',
   `y`       VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'Y 轴筛选字段',
