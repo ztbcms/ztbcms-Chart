@@ -11,6 +11,7 @@ class ChartService {
      * 获取 X 轴数据
      * @param $tableName string X轴数据获取表名
      * @param $time_field string 时间字段
+     * @param $time_section string 时间区间
      * @param $x string 字段名
      * @param string $x_type 统计方式
      * @param string $filter 额外的统计条件
@@ -18,17 +19,18 @@ class ChartService {
      * @param boolean $showAll 是否显示所有数据
      * @return array|string
      */
-    static function getX($tableName, $time_field, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
+    static function getX($tableName, $time_field, $time_section, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
 
         $x_type = trim(strtoupper($x_type));
 
         if (empty($filter)) $filter = '1=1';
+        if ($time_section) $filter .= self::getTimeFilter($time_field,$time_section);
 
         $x_filter = ChartModel::X_TYPE[$x_type];
 
         if ($x_filter) {
             $x_filter = new FilterX();
-            return $x_filter->$x_type($tableName, $time_field, $x, $x_type, $filter, $order, $showAll);
+            return $x_filter->$x_type($tableName, $time_field, $time_section, $x, $x_type, $filter, $order, $showAll);
         } else {
             //没有找到方法
             throw_exception(new Exception('没有指定X轴筛选规则'));
@@ -39,6 +41,7 @@ class ChartService {
      * 获取 Y 轴数据
      * @param $tableName string Y轴数据获取表名
      * @param $time_field string 时间字段
+     * @param $time_section string 时间区间
      * @param $x string X 轴
      * @param $x_type string X 轴类型
      * @param $y string Y 轴
@@ -48,7 +51,7 @@ class ChartService {
      * @param boolean $showAll 是否显示所有数据
      * @return array|string
      */
-    static function getY($tableName, $time_field, $x, $x_type, $y, $y_type = '__COUNT', $filter = '1=1', $order = 'id', $showAll = true) {
+    static function getY($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type = '__COUNT', $filter = '1=1', $order = 'id', $showAll = true) {
 
         //获取真正的统计基准字段 X
         $x = static::getXField($x, $x_type);
@@ -56,12 +59,13 @@ class ChartService {
         $y_type = trim(strtoupper($y_type));
 
         if (empty($filter)) $filter = '1=1';
+        if ($time_section) $filter .= self::getTimeFilter($time_field,$time_section);
 
         $y_filter = ChartModel::Y_TYPE[$y_type];
 
         if ($y_filter) {
             $y_filter = new FilterY();
-            return $y_filter->$y_type($tableName, $time_field, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            return $y_filter->$y_type($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
         } else {
             //没有找到方法
             throw_exception(new Exception('没有指定Y轴筛选规则'));
@@ -97,11 +101,6 @@ class ChartService {
             $filter = [];
             foreach ($fields as $k => $v) {
                 if (!empty($values[$k])) {
-                    //对时间段筛选进行特殊处理
-                    if ($k === 'during') {
-                        $today = mktime(0, 0, 0, date('m'), date('d') + 1, date('y'));
-                        $values[$k] = strtotime('- ' . $values[$k] . ' day', $today) . ' AND ' . $today;
-                    }
                     $filter[] = self::concatFilter($v, $operators[$k], $values[$k]);
                 }
             }
@@ -111,6 +110,54 @@ class ChartService {
         } else {
             return '';
         }
+    }
+
+    /**
+     * 获取数据时间区间
+     * @param $time_field
+     * @param $time_section
+     * @return string
+     */
+    protected function getTimeFilter($time_field, $time_section) {
+
+        if (empty($time_section)) {
+            return '';
+        }
+
+        $during = explode('-', strtoupper(trim($time_section)));
+        $today = mktime(0, 0, 0, date('m'), date('d') + 1, date('y'));
+        $now = time();
+        $complex = $during[1] > 1 ? 's' : '';
+        switch ($during[0]) {
+            //分钟
+            case 'I':
+                $during[1] = strtotime('- ' . $during[1] . ' minute' . $complex, $now) . ' AND ' . $now;
+                break;
+            //小时
+            case 'H':
+                $during[1] = strtotime('- ' . $during[1] . ' hour' . $complex, $now) . ' AND ' . $now;
+                break;
+            //天
+            case 'D':
+                $during[1] = strtotime('- ' . $during[1] . ' day' . $complex, $today) . ' AND ' . $today;
+                break;
+            //周
+            case 'W':
+                $during[1] = strtotime('- ' . $during[1] . ' week' . $complex, $today) . ' AND ' . $today;
+                break;
+            //月
+            case 'M':
+                $during[1] = strtotime('- ' . $during[1] . ' month' . $complex, $today) . ' AND ' . $today;
+                break;
+            //年
+            case 'Y':
+                $during[1] = strtotime('- ' . $during[1] . ' year' . $complex, $today) . ' AND ' . $today;
+                break;
+            default:
+                throw_exception(new Exception('暂不支持的时间区间'));
+        }
+
+        return ' AND '. $time_field . ' BETWEEN ' . $during[1];
     }
 
     /**

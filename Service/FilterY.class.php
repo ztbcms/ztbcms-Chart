@@ -19,14 +19,14 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    function __COUNT($tableName, $time_field, $x, $x_type, $y, $y_type = '__COUNT', $filter = '1=1', $order = 'id', $showAll = true) {
+    function __COUNT($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *,COUNT(' . $y . ') AS db_count,' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -54,6 +54,7 @@ class FilterY {
      * 获取字段总数
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param $x_type
      * @param $y
@@ -63,14 +64,14 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __SUM($tableName, $time_field, $x, $x_type, $y, $y_type = '__SUM', $filter = '1=1', $order = 'id', $showAll = true) {
+    public function __SUM($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *,SUM(' . $y . ') AS db_sum, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -83,19 +84,20 @@ class FilterY {
             } else {
                 $sql = $child . ' ORDER BY ' . $order;
             }
-
-            $y_set = $table->query($sql);
-            foreach ($y_set as $item) {
-                $y_data[] = $item['db_sum'];
-            }
-            return implode(',', $y_data);
         }
+
+        $y_set = $table->query($sql);
+        foreach ($y_set as $item) {
+            $y_data[] = $item['db_sum'];
+        }
+        return implode(',', $y_data);
     }
 
     /**
      * 获取字段平均值
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param $x_type
      * @param $y
@@ -105,14 +107,14 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __AVG($tableName, $time_field, $x, $x_type, $y, $y_type = '__AVG', $filter = '1=1', $order = 'id', $showAll = true) {
+    public function __AVG($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *,AVG(' . $y . ') AS db_avg, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -139,6 +141,7 @@ class FilterY {
      * 获取字段最大值
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param $x_type
      * @param $y
@@ -148,14 +151,14 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __MAX($tableName, $time_field, $x, $x_type, $y, $y_type = '__MAX', $filter = '1=1', $order = 'id', $showAll = true) {
+    public function __MAX($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *,MAX(' . $y . ') AS db_max, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -182,6 +185,7 @@ class FilterY {
      * 获取字段最小值
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param $x_type
      * @param $y
@@ -191,14 +195,14 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __MIN($tableName, $time_field, $x, $x_type, $y, $y_type = '__MIN', $filter = '1=1', $order = 'id', $showAll = true) {
+    public function __MIN($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *,MIN(' . $y . ') AS db_min, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -227,6 +231,7 @@ class FilterY {
      * 使用脚本
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param $x_type
      * @param $y
@@ -236,15 +241,16 @@ class FilterY {
      * @param bool $showAll
      * @return mixed
      */
-    function __SCRIPT($tableName, $time_field, $x, $x_type, $y, $y_type = '__COUNT', $filter = '1=1', $order = 'id', $showAll = true) {
+    function __SCRIPT($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $sctipt = new $y();
-        return $sctipt->run($tableName, $time_field, $x, $x_type, $y, $y_type = '__COUNT', $filter = '1=1', $order = 'id', $showAll = true);
+        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
     }
 
 
     /**
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param $x_type
      * @param $y
@@ -254,7 +260,7 @@ class FilterY {
      * @param bool $showAll
      * @return mixed
      */
-    protected function __TIME($tableName, $time_field, $x, $x_type, $y, $y_type, $filter = '1=1', $order = 'id', $showAll = true) {
+    protected function __TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $group_time = '';
 
         $x = explode('-', strtoupper(trim($x)));

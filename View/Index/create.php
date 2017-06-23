@@ -65,8 +65,8 @@
 
             <div class="row">
                 <div class="col-md-3">
-                    <select class="form-control" name="during" id="during" v-model="filter.field.during">
-                        <option value="during">请选择时间字段</option>
+                    <select class="form-control" name="time_field" id="time_field" v-model="options.time_field">
+                        <option value="">请选择时间字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
@@ -177,6 +177,7 @@
                         <option value="LT">小于</option>
                         <option value="LET">小于等于</option>
                         <option value="BETWEEN">介于</option>
+                        <option value="LIKE">模糊查询</option>
                         <option value="IS NULL">为 null</option>
                         <option value="IS NOT NULL">不为 null</option>
                     </select>
@@ -193,7 +194,7 @@
                 </div>
             </div>
 
-            <div class="row" v-if="Object.keys(filter.field).length > 1">
+            <div class="row" v-if="Object.keys(filter.field).length >= 1">
                 <br>
                 <div class="col-md-6">
                     <table class="table">
@@ -203,8 +204,7 @@
                             <th>筛选值</th>
                             <th>操作</th>
                         </tr>
-                        <tr v-for="(field,index) in filter.field" :index="index"
-                            v-if="index != 'during'">
+                        <tr v-for="(field,index) in filter.field" :index="index">
                             <td>{{ index }}</td>
                             <td>{{ filter.operator[index] }}</td>
                             <td>{{ filter.value[index] }}</td>
@@ -219,22 +219,16 @@
         </div>
 
         <div class="form-group" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
-            <label class="form-label" for="">时间段</label>
+            <label class="form-label" for="">时间筛选</label>
             <div class="row">
 
                 <div class="col-md-2">
-                    <select class="form-control" name="show_all" id="show_all" v-model="filter.value.during">
+                    <select class="form-control" name="time_section" id="time_section" v-model="options.time_section">
                         <option value="">请选择时间段</option>
-                        <option value="3">最近3天</option>
-                        <option value="7">最近7天</option>
-                        <option value="15">最近15天</option>
-                        <option value="30">最近30天</option>
-                        <option value="365">最近一年</option>
+                        <volist name="during" id="item">
+                            <option value="{$key}">{$item}</option>
+                        </volist>
                     </select>
-                </div>
-
-                <div v-if="filter.value.during != '' && filter.field.during == 'during'" style="color: red;">
-                    请选择可用的时间字段
                 </div>
 
             </div>
@@ -316,15 +310,17 @@
             filter_operator: '',
             filter_value: '',
             x_space: '',
-            time_unit: 'm',
+            time_unit: 'I',
             filter: {
-                field: {during: 'during'},
-                operator: {during: 'BETWEEN'},
-                value: {during: ''},
+                field: {},
+                operator: {},
+                value: {},
             },
             options: {
                 title: '',
                 table: '',
+                time_field: '',
+                time_section: '',
                 x: '',
                 x_type: '',
                 y: '',

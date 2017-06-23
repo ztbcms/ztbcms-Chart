@@ -2,7 +2,6 @@
 
 namespace Chart\Service;
 
-use function PHPSTORM_META\map;
 use Think\Exception;
 
 class FilterX {
@@ -39,6 +38,7 @@ class FilterX {
      * 按时间分组数据
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param string $x_type
      * @param string $filter
@@ -46,7 +46,7 @@ class FilterX {
      * @param bool $showAll
      * @return string
      */
-    public function __TIME($tableName, $time_field, $x, $x_type = '__TIME', $filter = '1=1', $order = 'id', $showAll = true) {
+    public function __TIME($tableName, $time_field, $time_section, $x, $x_type, $filter, $order, $showAll) {
 
         $group_time = '';
 
@@ -112,6 +112,8 @@ class FilterX {
         $sql .= 'WHERE (' . $filter . ')  ';
         $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
+        var_dump($sql);
+
         $x_set = M($tableName)->query($sql);
         $x_data = [];
 
@@ -126,6 +128,7 @@ class FilterX {
      * 使用脚本统计
      * @param $tableName
      * @param $time_field
+     * @param $time_section
      * @param $x
      * @param string $x_type
      * @param string $filter
@@ -133,8 +136,8 @@ class FilterX {
      * @param bool $showAll
      * @return mixed
      */
-    public function __SCRIPT($tableName, $time_field, $x, $x_type = 'field', $filter = '1 = 1', $order = 'id', $showAll = true) {
+    public function __SCRIPT($tableName, $time_field, $time_section, $x, $x_type, $filter, $order, $showAll) {
         $sctipt = new $x();
-        return $sctipt->run();
+        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $filter, $order, $showAll);
     }
 }
