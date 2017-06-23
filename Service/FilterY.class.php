@@ -31,7 +31,7 @@ class FilterY {
             $sql = 'SELECT *,COUNT(' . $y . ') AS db_count,' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
-            $sql .= 'GROUP BY group_time ORDER BY  group_time desc, ' . $order;
+            $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
         } else {
             $child = 'SELECT ' . $x . ',COUNT(' . $y . ') AS db_count FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
@@ -76,7 +76,7 @@ class FilterY {
             $sql = 'SELECT *,SUM(' . $y . ') AS db_sum, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
-            $sql .= 'GROUP BY group_time ORDER BY  group_time desc, ' . $order;
+            $sql .= 'GROUP BY group_time ORDER BY ' . $order;
         } else {
             $child = 'SELECT ' . $x . ',SUM(' . $y . ') AS db_sum FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
             if ($showAll) {
@@ -119,7 +119,7 @@ class FilterY {
             $sql = 'SELECT *,AVG(' . $y . ') AS db_avg, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
-            $sql .= 'GROUP BY group_time ORDER BY  group_time desc, ' . $order;
+            $sql .= 'GROUP BY group_time ORDER BY ' . $order;
         } else {
             $child = 'SELECT ' . $x . ',AVG(' . $y . ') AS db_avg FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
             if ($showAll) {
@@ -163,7 +163,7 @@ class FilterY {
             $sql = 'SELECT *,MAX(' . $y . ') AS db_max, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
-            $sql .= 'GROUP BY group_time ORDER BY  group_time desc, ' . $order;
+            $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
         } else {
             $child = 'SELECT ' . $x . ',MAX(' . $y . ') AS db_max FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
@@ -207,7 +207,7 @@ class FilterY {
             $sql = 'SELECT *,MIN(' . $y . ') AS db_min, ' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
-            $sql .= 'GROUP BY group_time ORDER BY  group_time desc, ' . $order;
+            $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
         } else {
             $child = 'SELECT ' . $x . ',MIN(' . $y . ') AS db_min FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
