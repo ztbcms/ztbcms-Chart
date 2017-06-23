@@ -24,7 +24,7 @@ class ChartService {
         $x_type = trim(strtoupper($x_type));
 
         if (empty($filter)) $filter = '1=1';
-        if ($time_section) $filter .= self::getTimeFilter($time_field,$time_section);
+        if ($time_section) $filter .= self::getTimeFilter($time_field, $time_section);
 
         $x_filter = ChartModel::X_TYPE[$x_type];
 
@@ -59,7 +59,7 @@ class ChartService {
         $y_type = trim(strtoupper($y_type));
 
         if (empty($filter)) $filter = '1=1';
-        if ($time_section) $filter .= self::getTimeFilter($time_field,$time_section);
+        if ($time_section) $filter .= self::getTimeFilter($time_field, $time_section);
 
         $y_filter = ChartModel::Y_TYPE[$y_type];
 
@@ -157,7 +157,7 @@ class ChartService {
                 throw_exception(new Exception('暂不支持的时间区间'));
         }
 
-        return ' AND '. $time_field . ' BETWEEN ' . $during[1];
+        return ' AND ' . $time_field . ' BETWEEN ' . $during[1];
     }
 
     /**
@@ -174,7 +174,11 @@ class ChartService {
             case 'IS NOT NULL':
                 $filter = $field . ' ' . $operator;
                 break;
+            case 'LIKE':
+                $filter = $field . ' ' . $operator . ' \'%' . $value . '%\'';
+                break;
             case 'BETWEEN':
+                $value = implode(' AND ', explode(',', $value));
                 $filter = $field . ' ' . $operator . ' ' . $value;
                 break;
             default:

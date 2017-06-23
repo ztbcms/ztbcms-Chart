@@ -112,8 +112,6 @@ class FilterX {
         $sql .= 'WHERE (' . $filter . ')  ';
         $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
-        var_dump($sql);
-
         $x_set = M($tableName)->query($sql);
         $x_data = [];
 
