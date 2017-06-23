@@ -10,7 +10,7 @@ class GetProvince extends BaseScriptX {
         return 'parentid';
     }
 
-    public function run() {
+    public function run($tableName, $x, $x_type = '__TIME', $filter = '1=1', $order = 'id', $showAll = true) {
         $x_data = [];
         $prefix = C('DB_PREFIX');
         $model = M('area_city a');

@@ -23,6 +23,7 @@ class ChartModel extends Model {
      */
     const X_TYPE = [
         "__FIELD" => '字段',
+        "__TIME" => '时间段',
         '__SCRIPT' => '使用脚本',
     ];
 

@@ -36,7 +36,9 @@ class IndexController extends AdminBase {
     public function doCreate() {
         $post = I('post.');
         //获取额外的字段筛选条件
-        $post['filter'] = ChartService::getXFilter($post['filter'], $post['filter_operator'], $post['filter_value']);
+        $post['filter'] = ChartService::getFilter($post['field'], $post['operator'], $post['value']);
+        $post['time_field'] = $post['field']['during'];
+
         $post['token'] = md5(json_encode($post));
         $chart = M('chartList')->where(['token' => $post['token']])->find();
 
@@ -80,7 +82,7 @@ class IndexController extends AdminBase {
         return $scripts;
     }
 
-    protected function getXTypes(){
+    protected function getXTypes() {
         return ChartModel::X_TYPE;
     }
 
@@ -103,7 +105,7 @@ class IndexController extends AdminBase {
 
     }
 
-    protected function getYTypes(){
+    protected function getYTypes() {
         return ChartModel::Y_TYPE;
     }
 
@@ -124,14 +126,14 @@ class IndexController extends AdminBase {
         $get = I('get.');
 
         //获取额外的字段筛选条件
-        $filter = ChartService::getXFilter($get['filter'], $get['operator'], $get['value']);
+        $filter = ChartService::getFilter($get['filter'], $get['operator'], $get['value']);
 
         //设置 X 轴数据
-        $x_data = ChartService::getX($get['table'], $get['x'], $get['x_type'], $filter, $get['order'], $get['show_all']);
+        $x_data = ChartService::getX($get['table'], $get['filter']['during'], $get['x'], $get['x_type'], $filter, $get['order'], $get['show_all']);
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($get['table'], $get['x'], $get['x_type'], $get['y'], $get['y_type'], $filter, $get['order'], $get['show_all']);
+        $y_data = ChartService::getY($get['table'], $get['filter']['during'], $get['x'], $get['x_type'], $get['y'], $get['y_type'], $filter, $get['order'], $get['show_all']);
         $this->assign('y_data', $y_data);
 
         //设置图表大小

@@ -10,6 +10,7 @@ class ChartService {
     /**
      * 获取 X 轴数据
      * @param $tableName string X轴数据获取表名
+     * @param $time_field string 时间字段
      * @param $x string 字段名
      * @param string $x_type 统计方式
      * @param string $filter 额外的统计条件
@@ -17,7 +18,7 @@ class ChartService {
      * @param boolean $showAll 是否显示所有数据
      * @return array|string
      */
-    static function getX($tableName, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
+    static function getX($tableName, $time_field, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
 
         $x_type = trim(strtoupper($x_type));
 
@@ -27,7 +28,7 @@ class ChartService {
 
         if ($x_filter) {
             $x_filter = new FilterX();
-            return $x_filter->$x_type($tableName, $x, $x_type, $filter, $order, $showAll);
+            return $x_filter->$x_type($tableName, $time_field, $x, $x_type, $filter, $order, $showAll);
         } else {
             //没有找到方法
             throw_exception(new Exception('没有指定X轴筛选规则'));
@@ -37,6 +38,7 @@ class ChartService {
     /**
      * 获取 Y 轴数据
      * @param $tableName string Y轴数据获取表名
+     * @param $time_field string 时间字段
      * @param $x string X 轴
      * @param $x_type string X 轴类型
      * @param $y string Y 轴
@@ -46,7 +48,7 @@ class ChartService {
      * @param boolean $showAll 是否显示所有数据
      * @return array|string
      */
-    static function getY($tableName, $x, $x_type, $y, $y_type = '__COUNT', $filter = '1=1', $order = 'id', $showAll = true) {
+    static function getY($tableName, $time_field, $x, $x_type, $y, $y_type = '__COUNT', $filter = '1=1', $order = 'id', $showAll = true) {
 
         //获取真正的统计基准字段 X
         $x = static::getXField($x, $x_type);
@@ -59,7 +61,7 @@ class ChartService {
 
         if ($y_filter) {
             $y_filter = new FilterY();
-            return $y_filter->$y_type($tableName, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            return $y_filter->$y_type($tableName, $time_field, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
         } else {
             //没有找到方法
             throw_exception(new Exception('没有指定Y轴筛选规则'));
@@ -90,23 +92,23 @@ class ChartService {
      * @param $values
      * @return string
      */
-    static function getXFilter($fields, $operators, $values) {
+    static function getFilter($fields, $operators, $values) {
         if (is_array($fields)) {
-            $filter = '';
+            $filter = [];
             foreach ($fields as $k => $v) {
-                if(!empty($values[$k])){
+                if (!empty($values[$k])) {
                     //对时间段筛选进行特殊处理
-                    if ($k === 'during'){
-                        $today = mktime(0,0,0,date('m'),date('d') + 1,date('y'));
-                        $values[$k] = strtotime('- ' . $values[$k] . ' day',$today) . ' AND ' . $today;
+                    if ($k === 'during') {
+                        $today = mktime(0, 0, 0, date('m'), date('d') + 1, date('y'));
+                        $values[$k] = strtotime('- ' . $values[$k] . ' day', $today) . ' AND ' . $today;
                     }
-                    $filter .= self::concatFilter($v, $operators[$k], $values[$k]);
+                    $filter[] = self::concatFilter($v, $operators[$k], $values[$k]);
                 }
             }
-            return $filter;
+            return implode(' AND ', $filter);
         } elseif (!empty($filter)) {
             return self::concatFilter($fields, $operators, $values);
-        }else{
+        } else {
             return '';
         }
     }

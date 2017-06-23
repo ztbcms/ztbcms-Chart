@@ -61,6 +61,24 @@
         </div>
 
         <div class="form-group">
+            <label class="form-label" for="">时间字段</label>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <select class="form-control" name="during" id="during" v-model="filter.field.during">
+                        <option value="during">请选择时间字段</option>
+                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12" style="color: red;">
+                    <p>如果需要根据时间分组或统计指定时间段内的数据，请务必指定时间字段，否则统计会出错。</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
             <label class="form-label" for="">分组依据（X 轴）</label>
 
             <div class="row">
@@ -73,7 +91,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.x_type.toUpperCase() !== '__SCRIPT'">
+                <div class="col-md-3" v-if="options.x_type.toUpperCase() == '__FIELD'">
                     <select class="form-control" name="x" id="x_field" v-model="options.x">
                         <option value="">请选择字段</option>
                         <option v-for="field in fields" :value="field">{{ field }}</option>
@@ -87,6 +105,21 @@
                             <option value="{$item}">{$item}</option>
                         </volist>
                     </select>
+                </div>
+
+                <div v-if="options.x_type.toUpperCase() == '__TIME'">
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" name="x" id="x_time" v-model="x_space">
+                    </div>
+                    <div class="col-md-2">
+                        <select name="time_unit" id="time_unit" v-model="time_unit" class="form-control">
+                            <option value="I">分钟</option>
+                            <option value="H">小时</option>
+                            <option value="D">天</option>
+                            <option value="M">月</option>
+                            <option value="Y">年</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -188,12 +221,6 @@
         <div class="form-group" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
             <label class="form-label" for="">时间段</label>
             <div class="row">
-                <div class="col-md-2">
-                    <select class="form-control" name="during" id="during" v-model="filter.field.during">
-                        <option value="during">请选择时间字段</option>
-                        <option v-for="field in fields" :value="field">{{ field }}</option>
-                    </select>
-                </div>
 
                 <div class="col-md-2">
                     <select class="form-control" name="show_all" id="show_all" v-model="filter.value.during">
@@ -204,6 +231,10 @@
                         <option value="30">最近30天</option>
                         <option value="365">最近一年</option>
                     </select>
+                </div>
+
+                <div v-if="filter.value.during != '' && filter.field.during == 'during'" style="color: red;">
+                    请选择可用的时间字段
                 </div>
 
             </div>
@@ -281,9 +312,11 @@
             other_table: false,
             width: '900',
             height: '400',
-            filter_field: "",
-            filter_operator: "",
-            filter_value: "",
+            filter_field: '',
+            filter_operator: '',
+            filter_value: '',
+            x_space: '',
+            time_unit: 'm',
             filter: {
                 field: {during: 'during'},
                 operator: {during: 'BETWEEN'},
@@ -323,9 +356,9 @@
                 delete this.filter.value[index];
 
                 //复制对象
-                let field = this.filter.field;
-                let operator = this.filter.operator;
-                let value = this.filter.value;
+                var field = this.filter.field;
+                var operator = this.filter.operator;
+                var value = this.filter.value;
 
                 //重置vue对象值
                 this.filter.field = null;
@@ -338,8 +371,8 @@
                 this.filter.value = value;
             },
             getTableFields: function () {
-                let that = this;
-                let data = {
+                var that = this;
+                var data = {
                     table: this.options.table
                 };
                 $.get("{:U('Index/getTableFields')}", data, function (res) {
@@ -349,21 +382,25 @@
                 }, 'json');
             },
             getUrl: function () {
-                let url = this.base;
+                var url = this.base;
+
+                if (this.options.x_type.toUpperCase() === "__TIME") {
+                    this.options.x = this.time_unit + '-' + this.x_space;
+                }
+
                 //获取配置
-                for (let i in this.options) {
+                for (var i in this.options) {
                     url += '&' + i + '=' + this.options[i];
                 }
                 //获取大小设置
                 url += '&size=' + this.width + '*' + this.height;
+
                 //获取筛选条件
-                let where = '';
-                for (let i in this.filter.field) {
-                    if (this.filter.value[i] !== '') {
-                        where += '&filter[' + i + ']=' + this.filter.field[i];
-                        where += '&operator[' + i + ']=' + this.filter.operator[i];
-                        where += '&value[' + i + ']=' + this.filter.value[i];
-                    }
+                var where = '';
+                for (var i in this.filter.field) {
+                    where += '&filter[' + i + ']=' + this.filter.field[i];
+                    where += '&operator[' + i + ']=' + this.filter.operator[i];
+                    where += '&value[' + i + ']=' + this.filter.value[i];
                 }
                 url += where;
 
@@ -374,8 +411,15 @@
                 this.preview = true;
             },
             createChart: function () {
-                let that = this;
-                $.post("{:U('Index/doCreate')}", this.options, function (res) {
+                var that = this;
+
+                if (this.options.x_type.toUpperCase() === "__TIME") {
+                    this.options.x = this.time_unit + '-' + this.x_space;
+                }
+
+                var postData = Object.assign(this.options, this.filter);
+
+                $.post("{:U('Index/doCreate')}", postData, function (res) {
                     if (res.status) {
                         layer.msg('图表创建成功!');
                         that.url = "{:U('Api/getChart')}&token=" + res.data.token;
