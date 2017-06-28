@@ -16,7 +16,7 @@ class FilterX {
      * @param string $x_type
      * @param string $filter
      * @param string $order
-     * @param bool   $showAll
+     * @param bool $showAll
      * @return string
      */
     public function __FIELD($tableName, $time_field, $time_section, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
@@ -70,6 +70,8 @@ class FilterX {
                 }
 
                 $group = '\'' . implode('\',\'', array_map(function ($i, $j) {
+                        if ($i < 10) $i = '0' . $i;
+                        if ($j < 10) $j = '0' . $j;
                         return $i . '~' . $j;
                     }, $group1, $group2)) . '\'';
 

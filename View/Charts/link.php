@@ -44,12 +44,6 @@
             subtext:"{$subtext}"
         },
         color: ['#0099DA'],
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-            }
-        },
         toolbox: {
             show: {$tool},
             feature: {
@@ -65,38 +59,30 @@
             right: '10%',
             containLabel: true
         },
-        xAxis: [
-            {
-                type: 'category',
-                data: "{$x_data}".split(','),
-                axisTick: {
-                    alignWithLabel: true
-                }
+        tooltip: {
+            trigger: 'axis'
+        },
+        xAxis: {
+            data: "{$x_data}".split(','),
+        },
+        yAxis: {
+            splitLine: {
+                show: false
             }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        dataZoom: [
-            {
-                show: true,
-                start: 0,
-                end: 100,
-                type: 'slider',
-                filterMode: 'filter'
-            }
-        ],
-        series: [
-            {
-                name: '{$tips}',
-                type: 'bar',
-                barWidth: '60%',
-                data: "{$y_data}".split(',')
-            }
-        ]
-    };
+        },
+        dataZoom: [{
+            show: true,
+            start: 0,
+            end: 100,
+            type: 'slider',
+            filterMode: 'filter'
+        }],
+        series: {
+            name: '{$tips}',
+            type: 'line',
+            data: "{$y_data}".split(','),
+        }
+    }
 
     // 使用刚指定的配置项和数据显示图表。
     app.setOption(option);

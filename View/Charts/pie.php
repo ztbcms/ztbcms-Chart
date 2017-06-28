@@ -23,9 +23,9 @@
     <script src="https://cdn.bootcss.com/echarts/3.6.1/echarts.common.min.js"></script>
 
     <style>
-        html,body{
+        html, body {
             height: 100%;
-            width:100%;
+            width: 100%;
         }
     </style>
 </head>
@@ -35,20 +35,25 @@
 <div id="main" style="position:absolute;width: {$size[width]};height:{$size[height]};"></div>
 
 <script>
+    x_data = "{$x_data}".split(',');
+    y_data = "{$y_data}".split(',');
+    data = [];
+    y_data.forEach(function (y, index) {
+        data.push({
+            name: x_data[index],
+            value: y
+        });
+    });
+</script>
+<script>
     // 基于准备好的dom，初始化echarts实例
     app = echarts.init(document.getElementById('main'));
 
     option = {
         title: {
             text: '{$title}',
-            subtext:"{$subtext}"
-        },
-        color: ['#0099DA'],
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-            }
+            subtext: '{$subtext}',
+            x: 'center'
         },
         toolbox: {
             show: {$tool},
@@ -59,44 +64,28 @@
                 }
             }
         },
-        grid: {
-            left: '3%',
-            bottom: '10%',
-            right: '10%',
-            containLabel: true
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
         },
-        xAxis: [
-            {
-                type: 'category',
-                data: "{$x_data}".split(','),
-                axisTick: {
-                    alignWithLabel: true
-                }
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        dataZoom: [
-            {
-                show: true,
-                start: 0,
-                end: 100,
-                type: 'slider',
-                filterMode: 'filter'
-            }
-        ],
         series: [
             {
                 name: '{$tips}',
-                type: 'bar',
-                barWidth: '60%',
-                data: "{$y_data}".split(',')
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: data,
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
             }
         ]
     };
+
 
     // 使用刚指定的配置项和数据显示图表。
     app.setOption(option);
