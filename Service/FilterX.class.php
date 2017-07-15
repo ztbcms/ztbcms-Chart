@@ -14,12 +14,29 @@ class FilterX {
      * @param        $time_section
      * @param        $x
      * @param string $x_type
+     * @param string $x_script 脚本
+     * @param string $x_foreign_table 关联表
+     * @param string $x_foreign_key 关联字段
+     * @param string $x_foreign_field 显示字段
      * @param string $filter
      * @param string $order
      * @param bool $showAll
      * @return string
      */
-    public function __FIELD($tableName, $time_field, $time_section, $x, $x_type = '__FIELD', $filter = '1=1', $order = 'id', $showAll = true) {
+    public function __FIELD(
+        $tableName,
+        $time_field,
+        $time_section,
+        $x,
+        $x_type,
+        $x_script,
+        $x_foreign_table,
+        $x_foreign_key,
+        $x_foreign_field,
+        $filter,
+        $order,
+        $showAll
+    ) {
         $x_data = [];
 
         $table = M($tableName);
@@ -37,18 +54,88 @@ class FilterX {
     }
 
     /**
+     * 外键关联
+     *
+     * @param        $tableName
+     * @param        $time_field
+     * @param        $time_section
+     * @param        $x
+     * @param string $x_type
+     * @param string $x_script 脚本
+     * @param string $x_foreign_table 关联表
+     * @param string $x_foreign_key 关联字段
+     * @param string $x_foreign_field 显示字段
+     * @param string $filter
+     * @param string $order
+     * @param bool $showAll
+     * @return string
+     */
+    public function __FOREIGN(
+        $tableName,
+        $time_field,
+        $time_section,
+        $x,
+        $x_type,
+        $x_script,
+        $x_foreign_table,
+        $x_foreign_key,
+        $x_foreign_field,
+        $filter,
+        $order,
+        $showAll
+    ) {
+        $x_data = [];
+
+        $table = M($tableName);
+
+        if ($showAll) {
+            $x_set = $table->alias('a')
+                ->join("INNER JOIN " . C('DB_PREFIX') . $x_foreign_table . ' as b ON a.' . $x . ' = b.' . $x_foreign_key)
+                ->field('b.' . $x_foreign_field . ',a.' . $x .',b.' . $x_foreign_key )
+                ->group($x)->order($order)->select();
+        } else {
+            $x_set = $table->alias('a')
+                ->join("INNER JOIN " . C('DB_PREFIX') . $x_foreign_table . ' as b ON a.' . $x . ' = b.' . $x_foreign_key)
+                ->field('b.' . $x_foreign_field . ',a.' . $x .',b.' . $x_foreign_key )
+                ->where($filter)->group($x)->order($order)->select();
+        }
+
+        foreach ($x_set as $item) {
+            $x_data[] = $item[$x_foreign_field];
+        }
+        return implode(',', $x_data);
+    }
+
+    /**
      * 按时间分组数据
      * @param $tableName
      * @param $time_field
      * @param $time_section
      * @param $x
      * @param string $x_type
+     * @param string $x_script 脚本
+     * @param string $x_foreign_table 关联表
+     * @param string $x_foreign_key 关联字段
+     * @param string $x_foreign_field 显示字段
      * @param string $filter
      * @param string $order
      * @param bool $showAll
      * @return string
      */
-    public function __TIME($tableName, $time_field, $time_section, $x, $x_type, $filter, $order, $showAll) {
+    public function __TIME(
+        $tableName,
+        $time_field,
+        $time_section,
+        $x,
+        $x_type,
+        $x_script,
+        $x_foreign_table,
+        $x_foreign_key,
+        $x_foreign_field,
+        $filter,
+        $order,
+        $showAll
+    ) {
 
         $group_time = '';
 
@@ -133,13 +220,30 @@ class FilterX {
      * @param $time_section
      * @param $x
      * @param string $x_type
+     * @param string $x_script 脚本
+     * @param string $x_foreign_table 关联表
+     * @param string $x_foreign_key 关联字段
+     * @param string $x_foreign_field 显示字段
      * @param string $filter
      * @param string $order
      * @param bool $showAll
      * @return mixed
      */
-    public function __SCRIPT($tableName, $time_field, $time_section, $x, $x_type, $filter, $order, $showAll) {
-        $sctipt = new $x();
-        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $filter, $order, $showAll);
+    public function __SCRIPT(
+        $tableName,
+        $time_field,
+        $time_section,
+        $x,
+        $x_type,
+        $x_script,
+        $x_foreign_table,
+        $x_foreign_key,
+        $x_foreign_field,
+        $filter,
+        $order,
+        $showAll
+    ) {
+        $sctipt = new $x_script();
+        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $x_script, $x_foreign_table, $x_foreign_key, $x_foreign_field, $filter, $order, $showAll);
     }
 }

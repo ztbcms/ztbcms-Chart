@@ -22,15 +22,17 @@ class ChartModel extends Model {
      * X 轴统计方式
      */
     const X_TYPE = [
-        "__FIELD" => '字段',
-        "__TIME" => '时间段',
-        '__SCRIPT' => '使用脚本',
+        "__FIELD" => '按原字段分组',
+        "__TIME" => '按时间段分组',
+        '__FOREIGN' => '使用关联表字段分组',
+        '__SCRIPT' => '使用脚本分组',
     ];
 
     /**
      * Y 轴统计方式
      */
     const Y_TYPE = [
+        '__FIELD' => '原字段输出',
         '__COUNT' => '字段计数',
         '__SUM' => '求和',
         '__AVG' => '平均值',

@@ -7,6 +7,47 @@ use Think\Exception;
 class FilterY {
 
     /**
+     * 原字段输出
+     *
+     * @param $tableName
+     * @param $time_field
+     * @param $time_section
+     * @param $x
+     * @param $x_type
+     * @param $y
+     * @param $y_type
+     * @param $filter
+     * @param $order
+     * @param $showAll
+     * @return string
+     */
+    function __FIELD($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+        $y_data = [];
+
+        $table = M($tableName);
+
+        if ($x_type == "__TIME") {
+            //对根据时间分组的统计进行特殊处理
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+
+            $sql = 'SELECT *,' . $group_time;
+            $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
+            $sql .= 'WHERE (' . $filter . ')  ';
+            $sql .= 'GROUP BY group_time ORDER BY ' . $order;
+
+        } else {
+            $child = 'SELECT ' . $y . ' FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
+            $sql = $child . ' ORDER BY ' . $order;
+        }
+
+        $y_set = $table->query($sql);
+        foreach ($y_set as $item) {
+            $y_data[] = $item[$y];
+        }
+        return implode(',', $y_data);
+    }
+
+    /**
      * 获取字段计数
      * @param $tableName
      * @param $time_field

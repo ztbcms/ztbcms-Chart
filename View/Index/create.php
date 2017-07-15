@@ -61,42 +61,25 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label" for="">时间字段</label>
-
-            <div class="row">
-                <div class="col-md-3">
-                    <select class="form-control" name="time_field" id="time_field" v-model="options.time_field">
-                        <option value="">请选择时间字段</option>
-                        <option v-for="field in fields" :value="field">{{ field }}</option>
-                    </select>
-                </div>
-
-                <div class="col-md-12" style="color: red;">
-                    <p>如果需要根据时间分组或统计指定时间段内的数据，请务必指定时间字段，否则统计会出错。</p>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="form-group">
             <label class="form-label" for="">分组依据（X 轴）</label>
 
             <div class="row">
                 <div class="col-md-3">
+                    <select class="form-control" name="x" id="x_field" v-model="options.x">
+                        <option value="">请选择字段</option>
+                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
                     <select class="form-control" name="x_type" id="x_type" v-model="options.x_type">
-                        <option value="">选择统计方式</option>
+                        <option value="">选择分组方式</option>
                         <volist name="xType" id="item">
                             <option value="{$key}">{$item}</option>
                         </volist>
                     </select>
                 </div>
 
-                <div class="col-md-3" v-if="options.x_type.toUpperCase() == '__FIELD'">
-                    <select class="form-control" name="x" id="x_field" v-model="options.x">
-                        <option value="">请选择字段</option>
-                        <option v-for="field in fields" :value="field">{{ field }}</option>
-                    </select>
-                </div>
 
                 <div class="col-md-3" v-if="options.x_type.toUpperCase() == '__SCRIPT'">
                     <select class="form-control" name="x" id="x_script" v-model="options.x">
@@ -123,24 +106,63 @@
                 </div>
             </div>
 
+            <div class="form-group" v-if="options.x_type.toUpperCase() == '__FOREIGN'">
+                <label class="form-label" for="">关联表</label>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input class="form-control" type="text" v-model="options.x_foreign_table"
+                               v-if="other_foreign_table" placeholder="请填写表名，不带前缀" @blur="getForeignTableFields">
+                        <select class="form-control" name="table" id="table" v-model="options.x_foreign_table" v-else
+                                @change="getForeignTableFields">
+                            <option value="">选择模型表</option>
+                            <volist name="tables" id="table">
+                                <option value="{$table['tablename']}">{$table[name]}</option>
+                            </volist>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <select class="form-control" name="table" id="table" v-model="options.x_foreign_key">
+                            <option value="">请选择关联字段</option>
+                            <option v-for="field in foreign_fields" :value="field">{{ field }}</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <select class="form-control" name="table" id="table" v-model="options.x_foreign_field">
+                            <option value="">请选择显示字段</option>
+                            <option v-for="field in foreign_fields" :value="field">{{ field }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="form-label" for="other_foreign_table" style="margin-top: 5px;">
+                            <input type="checkbox" v-model="other_foreign_table" id="other_foreign_table">没有列出我需要的数据表，我需要手工填写
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="form-group">
             <label class="form-label" for="">统计方式（Y 轴）</label>
             <div class="row">
+
+                <div class="col-md-3" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
+                    <select class="form-control" name="y" id="y_field" v-model="options.y">
+                        <option value="">请选择字段</option>
+                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    </select>
+                </div>
+
                 <div class="col-md-3">
                     <select class="form-control" name="y_type" id="y_type" v-model="options.y_type">
                         <option value="">选择统计方式</option>
                         <volist name="yType" id="item">
                             <option value="{$key}">{$item}</option>
                         </volist>
-                    </select>
-                </div>
-
-                <div class="col-md-3" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
-                    <select class="form-control" name="y" id="y_field" v-model="options.y">
-                        <option value="">请选择字段</option>
-                        <option v-for="field in fields" :value="field">{{ field }}</option>
                     </select>
                 </div>
 
@@ -157,7 +179,7 @@
         </div>
 
         <div class="form-group" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
-            <label class="form-label" for="">筛选条件</label>
+            <label class="form-label" for="">额外筛选条件</label>
             <div class="row">
                 <div class="col-md-2">
                     <select class="form-control" name="filter_field" id="filter_field" v-model="filter_field">
@@ -219,10 +241,17 @@
         </div>
 
         <div class="form-group" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
-            <label class="form-label" for="">时间筛选</label>
+            <label class="form-label" for="">统计时间范围</label>
             <div class="row">
 
-                <div class="col-md-2">
+                <div class="col-md-3">
+                    <select class="form-control" name="time_field" id="time_field" v-model="options.time_field">
+                        <option value="">请选择时间字段</option>
+                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
                     <select class="form-control" name="time_section" id="time_section" v-model="options.time_section">
                         <option value="">请选择时间段</option>
                         <volist name="during" id="item">
@@ -304,6 +333,8 @@
             previewUrl: '',
             fields: [],
             other_table: false,
+            foreign_fields: [],
+            other_foreign_table: false,
             width: '900',
             height: '400',
             filter_field: '',
@@ -323,6 +354,9 @@
                 time_section: '',
                 x: '',
                 x_type: '',
+                x_foreign_table: '',
+                x_foreign_key: '',
+                x_foreign_field: '',
                 y: '',
                 y_type: '',
                 tips: '',
@@ -374,6 +408,17 @@
                 $.get("{:U('Index/getTableFields')}", data, function (res) {
                     if (res.status) {
                         that.fields = res.data;
+                    }
+                }, 'json');
+            },
+            getForeignTableFields: function () {
+                var that = this;
+                var data = {
+                    table: this.options.x_foreign_table
+                };
+                $.get("{:U('Index/getTableFields')}", data, function (res) {
+                    if (res.status) {
+                        that.foreign_fields = res.data;
                     }
                 }, 'json');
             },
