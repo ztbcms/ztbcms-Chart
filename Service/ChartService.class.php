@@ -99,22 +99,23 @@ class ChartService {
 
     /**
      * 获取额外的字段筛选条件
+     * @param $table
      * @param $fields
      * @param $operators
      * @param $values
      * @return string
      */
-    static function getFilter($fields, $operators, $values) {
+    static function getFilter($table, $fields, $operators, $values) {
         if (is_array($fields)) {
             $filter = [];
             foreach ($fields as $k => $v) {
                 if (!empty($values[$k])) {
-                    $filter[] = self::concatFilter($v, $operators[$k], $values[$k]);
+                    $filter[] = self::concatFilter($table, $v, $operators[$k], $values[$k]);
                 }
             }
             return implode(' AND ', $filter);
         } elseif (!empty($filter)) {
-            return self::concatFilter($fields, $operators, $values);
+            return self::concatFilter($table, $fields, $operators, $values);
         } else {
             return '';
         }
@@ -170,27 +171,28 @@ class ChartService {
 
     /**
      * 根据操作符拼接 filter 字符串
+     * @param $table
      * @param $field
      * @param $operator
      * @param $value
      * @return string
      */
-    protected function concatFilter($field, $operator, $value) {
+    protected function concatFilter($table, $field, $operator, $value) {
         $operator = self::getOperator($operator);
         switch ($operator) {
             case 'IS NULL':
             case 'IS NOT NULL':
-                $filter = $field . ' ' . $operator;
+                $filter = C('DB_PREFIX') . $table . '.' . $field . ' ' . $operator;
                 break;
             case 'LIKE':
-                $filter = $field . ' ' . $operator . ' \'%' . $value . '%\'';
+                $filter = C('DB_PREFIX') . $table . '.' . $field . ' ' . $operator . ' \'%' . $value . '%\'';
                 break;
             case 'BETWEEN':
                 $value = implode(' AND ', explode(',', $value));
-                $filter = $field . ' ' . $operator . ' ' . $value;
+                $filter = C('DB_PREFIX') . $table . '.' . $field . ' ' . $operator . ' ' . $value;
                 break;
             default:
-                $filter = $field . ' ' . $operator . ' \'' . $value . '\'';
+                $filter = C('DB_PREFIX') . $table . '.' . $field . ' ' . $operator . ' \'' . $value . '\'';
         }
         return $filter;
     }

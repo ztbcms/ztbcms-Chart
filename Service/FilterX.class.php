@@ -88,17 +88,18 @@ class FilterX {
 
         $table = M($tableName);
 
-        if ($showAll) {
-            $x_set = $table->alias('a')
-                ->join("INNER JOIN " . C('DB_PREFIX') . $x_foreign_table . ' as b ON a.' . $x . ' = b.' . $x_foreign_key)
-                ->field('b.' . $x_foreign_field . ',a.' . $x .',b.' . $x_foreign_key )
-                ->group($x)->order($order)->select();
-        } else {
-            $x_set = $table->alias('a')
-                ->join("INNER JOIN " . C('DB_PREFIX') . $x_foreign_table . ' as b ON a.' . $x . ' = b.' . $x_foreign_key)
-                ->field('b.' . $x_foreign_field . ',a.' . $x .',b.' . $x_foreign_key )
-                ->where($filter)->group($x)->order($order)->select();
+        $fullTableName = C('DB_PREFIX') . $tableName;
+
+        $table
+            ->join("INNER JOIN " . C('DB_PREFIX') . $x_foreign_table . ' as b ON ' . $fullTableName . '.' . $x . ' = b.' . $x_foreign_key)
+            ->field('b.' . $x_foreign_field . ',' . $fullTableName . '.' . $x . ',b.' . $x_foreign_key)
+            ->group($x)->order($order);
+
+        if (!$showAll) {
+            $table->where($filter);
         }
+
+        $x_set = $table->select();
 
         foreach ($x_set as $item) {
             $x_data[] = $item[$x_foreign_field];

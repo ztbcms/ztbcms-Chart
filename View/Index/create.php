@@ -253,7 +253,7 @@
 
                 <div class="col-md-3">
                     <select class="form-control" name="time_section" id="time_section" v-model="options.time_section">
-                        <option value="">请选择时间段</option>
+                        <option value="">请选择时间范围</option>
                         <volist name="during" id="item">
                             <option value="{$key}">{$item}</option>
                         </volist>
