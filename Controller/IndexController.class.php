@@ -37,7 +37,7 @@ class IndexController extends AdminBase {
     public function doCreate() {
         $post = I('post.');
         //获取额外的字段筛选条件
-        $post['filter'] = ChartService::getFilter($post['field'], $post['operator'], $post['value']);
+        $post['filter'] = ChartService::getFilter($post['table'], $post['field'], $post['operator'], $post['value']);
         $post['token'] = md5(json_encode($post));
         $chart = M('chartList')->where(['token' => $post['token']])->find();
 
