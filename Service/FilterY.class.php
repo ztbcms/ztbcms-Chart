@@ -442,15 +442,15 @@ class FilterY {
                 break;
             case 'D':
                 //按日统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d\') group_time ';
                 break;
             case 'M':
                 //按月统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m\') group_time ';
                 break;
             case 'Y':
                 //按年统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y\') group_time ';
                 break;
             default:
                 throw_exception(new Exception('暂不兼容的时间单位'));
