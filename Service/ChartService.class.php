@@ -61,6 +61,7 @@ class ChartService {
      * @param $time_section string 时间区间
      * @param $x string X 轴
      * @param $x_type string X 轴类型
+     * @param $x_time string X 轴时间
      * @param $y string Y 轴
      * @param string $y_type 统计方式
      * @param string $filter 额外的统计条件
@@ -74,6 +75,7 @@ class ChartService {
         $time_section,
         $x,
         $x_type,
+        $x_time,
         $y,
         $y_type = '__COUNT',
         $filter = '1=1',
@@ -90,7 +92,7 @@ class ChartService {
 
         if ($y_filter) {
             $y_filter = new FilterY();
-            return $y_filter->$y_type($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            return $y_filter->$y_type($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
         } else {
             //没有找到方法
             throw_exception(new Exception('没有指定Y轴筛选规则'));
@@ -117,7 +119,7 @@ class ChartService {
         } elseif (!empty($filter)) {
             return self::concatFilter($table, $fields, $operators, $values);
         } else {
-            return '';
+            return '1=1';
         }
     }
 

@@ -151,7 +151,7 @@ class FilterX {
         switch ($x_time[0]) {
             case 'I':
                 //按分钟统计
-                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d %H:\'), ';
+                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d %H:\'), ';
 
                 $group1 = $group2 = range(0, 60, $x_time[1]);
                 unset($group2[0]);
@@ -169,11 +169,11 @@ class FilterX {
                         return $i . '~' . $j;
                     }, $group1, $group2)) . '\'';
 
-                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%i\'),' . $index . '),' . $group . ')) group_time ';
+                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%i\'),' . $index . '),' . $group . ')) group_time ';
                 break;
             case 'H':
                 //按小时统计
-                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d \'), ';
+                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d \'), ';
 
                 $group1 = $group2 = range(0, 24, $x_time[1]);
                 unset($group2[0]);
@@ -188,19 +188,19 @@ class FilterX {
                         return $i . '~' . $j;
                     }, $group1, $group2)) . '\'';
 
-                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%H\'),' . $index . '),' . $group . ')) group_time ';
+                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%H\'),' . $index . '),' . $group . ')) group_time ';
                 break;
             case 'D':
                 //按日统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d\') group_time, ';
                 break;
             case 'M':
                 //按月统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m\') group_time, ';
                 break;
             case 'Y':
                 //按年统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y\') group_time, ';
                 break;
             default:
                 throw_exception(new Exception('暂不兼容的时间单位'));

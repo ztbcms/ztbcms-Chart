@@ -14,6 +14,7 @@ class FilterY {
      * @param $time_section
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param $y_type
      * @param $filter
@@ -21,7 +22,7 @@ class FilterY {
      * @param $showAll
      * @return string
      */
-    function __FIELD($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    function __FIELD($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         if (stripos($y, ',')) {
@@ -34,7 +35,7 @@ class FilterY {
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *,' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -65,6 +66,7 @@ class FilterY {
      * @param $time_field
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param string $y_type
      * @param string $filter
@@ -72,7 +74,7 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    function __COUNT($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    function __COUNT($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $fields = explode(',', $y);
@@ -85,7 +87,7 @@ class FilterY {
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -126,6 +128,7 @@ class FilterY {
      * @param $time_section
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param string $y_type
      * @param string $filter
@@ -133,7 +136,7 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __SUM($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    public function __SUM($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $fields = explode(',', $y);
@@ -146,7 +149,7 @@ class FilterY {
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -184,6 +187,7 @@ class FilterY {
      * @param $time_section
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param string $y_type
      * @param string $filter
@@ -191,7 +195,7 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __AVG($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    public function __AVG($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $fields = explode(',', $y);
@@ -204,7 +208,7 @@ class FilterY {
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -243,6 +247,7 @@ class FilterY {
      * @param $time_section
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param string $y_type
      * @param string $filter
@@ -250,7 +255,7 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __MAX($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    public function __MAX($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $fields = explode(',', $y);
@@ -263,7 +268,7 @@ class FilterY {
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -302,6 +307,7 @@ class FilterY {
      * @param $time_section
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param string $y_type
      * @param string $filter
@@ -309,7 +315,7 @@ class FilterY {
      * @param bool $showAll
      * @return string
      */
-    public function __MIN($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    public function __MIN($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
         $fields = explode(',', $y);
@@ -322,7 +328,7 @@ class FilterY {
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
-            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+            $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
 
             $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
@@ -361,6 +367,7 @@ class FilterY {
      * @param $time_section
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param string $y_type
      * @param string $filter
@@ -368,9 +375,9 @@ class FilterY {
      * @param bool $showAll
      * @return mixed
      */
-    function __SCRIPT($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    function __SCRIPT($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $sctipt = new $y();
-        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
+        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll);
     }
 
 
@@ -380,6 +387,7 @@ class FilterY {
      * @param $time_section
      * @param $x
      * @param $x_type
+     * @param $x_time
      * @param $y
      * @param string $y_type
      * @param string $filter
@@ -387,22 +395,22 @@ class FilterY {
      * @param bool $showAll
      * @return mixed
      */
-    protected function __TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
+    protected function __TIME($tableName, $time_field, $time_section, $x, $x_type, $x_time, $y, $y_type, $filter, $order, $showAll) {
         $group_time = '';
 
-        $x = explode('-', strtoupper(trim($x)));
+        $x_time = explode('-', strtoupper(trim($x_time)));
 
-        switch ($x[0]) {
+        switch ($x_time[0]) {
             case 'I':
                 //按分钟统计
-                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d %H:\'), ';
+                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d %H:\'), ';
 
-                $group1 = $group2 = range(0, 60, $x[1]);
+                $group1 = $group2 = range(0, 60, $x_time[1]);
                 unset($group2[0]);
                 $index = implode(',', $group1);
 
 
-                if (60 % $x[1] !== 0) {
+                if (60 % $x_time[1] !== 0) {
                     $group2[] = 60;
                     $index .= ',60';
                 }
@@ -411,17 +419,17 @@ class FilterY {
                         return $i . '~' . $j;
                     }, $group1, $group2)) . '\'';
 
-                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%i\'),' . $index . '),' . $group . ')) group_time ';
+                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%i\'),' . $index . '),' . $group . ')) group_time ';
                 break;
             case 'H':
                 //按小时统计
-                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d \'), ';
+                $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d \'), ';
 
-                $group1 = $group2 = range(0, 24, $x[1]);
+                $group1 = $group2 = range(0, 24, $x_time[1]);
                 unset($group2[0]);
                 $index = implode(',', $group1);
 
-                if (24 % $x[1] !== 0) {
+                if (24 % $x_time[1] !== 0) {
                     $group2[] = 24;
                     $index .= ',24';
                 }
@@ -430,19 +438,19 @@ class FilterY {
                         return $i . '~' . $j;
                     }, $group1, $group2)) . '\'';
 
-                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%H\'),' . $index . '),' . $group . ')) group_time ';
+                $group_time = 'CONCAT (' . $real_time . 'ELT(INTERVAL (DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%H\'),' . $index . '),' . $group . ')) group_time ';
                 break;
             case 'D':
                 //按日统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m-%d\') group_time, ';
                 break;
             case 'M':
                 //按月统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y-%m\') group_time, ';
                 break;
             case 'Y':
                 //按年统计
-                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y\') group_time, ';
+                $group_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $x . '),\'%Y\') group_time, ';
                 break;
             default:
                 throw_exception(new Exception('暂不兼容的时间单位'));

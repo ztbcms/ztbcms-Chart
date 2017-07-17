@@ -137,7 +137,7 @@ class IndexController extends AdminBase {
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($get['table'], $get['time_field'], $get['time_section'], $get['x'], $get['x_type'], $get['y'], $get['y_type'], $filter, $get['order'], $get['show_all']);
+        $y_data = ChartService::getY($get['table'], $get['time_field'], $get['time_section'], $get['x'], $get['x_type'], $get['x_time'], $get['y'], $get['y_type'], $filter, $get['order'], $get['show_all']);
         $this->assign('y_data', $y_data);
 
         //设置图表大小

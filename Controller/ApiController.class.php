@@ -66,12 +66,12 @@ class ApiController extends Controller {
         }
 
         //设置 X 轴数据
-        $x_data = ChartService::getX($chart['table'], $chart['time_field'], $chart['time_section'], $chart['x'], $chart['x_type'],$chart['x_time'],
+        $x_data = ChartService::getX($chart['table'], $chart['time_field'], $chart['time_section'], $chart['x'], $chart['x_type'], $chart['x_time'],
             $chart['x_script'], $chart['x_foreign_table'], $chart['x_foreign_key'], $chart['x_foreign_field'], $chart['filter'], $chart['order'], $chart['show_all']);
         $this->assign('x_data', $x_data);
 
         //设置 Y 轴数据
-        $y_data = ChartService::getY($chart['table'], $chart['time_field'], $chart['time_section'], $chart['x'], $chart['x_type'], $chart['y'], $chart['y_type'], $chart['filter'], $chart['order'], $chart['show_all']);
+        $y_data = ChartService::getY($chart['table'], $chart['time_field'], $chart['time_section'], $chart['x'], $chart['x_type'], $chart['x_time'], $chart['y'], $chart['y_type'], $chart['filter'], $chart['order'], $chart['show_all']);
         $this->assign('y_data', $y_data);
 
         //如果开启了数据缓存

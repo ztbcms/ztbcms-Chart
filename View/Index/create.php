@@ -465,7 +465,7 @@
                 var url = this.base;
 
                 if (this.options.x_type.toUpperCase() === "__TIME") {
-                    this.options.x = this.time_unit + '-' + this.x_space;
+                    this.options.x_time = this.time_unit + '-' + this.x_space;
                 }
 
                 //获取配置
