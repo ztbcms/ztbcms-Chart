@@ -24,6 +24,12 @@ class FilterY {
     function __FIELD($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
+        if (stripos($y, ',')) {
+            $fields = explode(',', $y);
+        } else {
+            $fields = $y;
+        }
+
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
@@ -42,9 +48,15 @@ class FilterY {
 
         $y_set = $table->query($sql);
         foreach ($y_set as $item) {
-            $y_data[] = $item[$y];
+            foreach ($fields as $index) {
+                $y_data[$index][] = $item[$index];
+            }
         }
-        return implode(',', $y_data);
+
+        foreach ($y_data as $k => $v) {
+            $y_data[$k] = implode(',', $v);
+        }
+        return $y_data;
     }
 
     /**
@@ -63,32 +75,48 @@ class FilterY {
     function __COUNT($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
+        $fields = explode(',', $y);
+        $fields_sql = '';
+        foreach ($fields as $field) {
+            $fields_sql .= ',COUNT(' . $field . ') AS ' . $field . '_count';
+        }
+
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
             $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
-            $sql = 'SELECT *,COUNT(' . $y . ') AS db_count,' . $group_time;
+            $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
             $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
         } else {
-            $child = 'SELECT ' . $x . ',COUNT(' . $y . ') AS db_count FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
+            $child = 'SELECT ' . $x . $fields_sql . ' FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
             if ($showAll) {
-                $sql = 'SELECT DISTINCT ' . $x . ',IF(db_count IS NULL,0,db_count) AS db_count FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
+                $show_sql = '';
+                foreach ($fields as $field) {
+                    $show_sql .= ',IF( ' . $field . '_count IS NULL, 0,' . $field . '_count) AS ' . $field . '_count';
+                }
+                $sql = 'SELECT DISTINCT ' . $x . $show_sql . ' FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
             } else {
                 $sql = $child . ' ORDER BY ' . $order;
             }
         }
 
         $y_set = $table->query($sql);
-        foreach ($y_set as $item) {
-            $y_data[] = $item['db_count'];
-        }
-        return implode(',', $y_data);
 
+        foreach ($y_set as $item) {
+            foreach ($fields as $index) {
+                $y_data[$index][] = $item[$index . '_count'];
+            }
+        }
+
+        foreach ($y_data as $k => $v) {
+            $y_data[$k] = implode(',', $v);
+        }
+        return $y_data;
     }
 
     /**
@@ -108,20 +136,30 @@ class FilterY {
     public function __SUM($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
+        $fields = explode(',', $y);
+        $fields_sql = '';
+        foreach ($fields as $field) {
+            $fields_sql .= ',SUM(' . $field . ') AS ' . $field . '_sum';
+        }
+
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
             $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
-            $sql = 'SELECT *,SUM(' . $y . ') AS db_sum, ' . $group_time;
+            $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
             $sql .= 'GROUP BY group_time ORDER BY ' . $order;
         } else {
-            $child = 'SELECT ' . $x . ',SUM(' . $y . ') AS db_sum FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
+            $child = 'SELECT ' . $x . $fields_sql . ' FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
             if ($showAll) {
-                $sql = 'SELECT DISTINCT ' . $x . ',IF(db_sum IS NULL,0,db_sum) AS db_sum FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
+                $show_sql = '';
+                foreach ($fields as $field) {
+                    $show_sql .= ',IF( ' . $field . '_sum IS NULL, 0,' . $field . '_sum) AS ' . $field . '_sum';
+                }
+                $sql = 'SELECT DISTINCT ' . $x . $show_sql . ' FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
             } else {
                 $sql = $child . ' ORDER BY ' . $order;
             }
@@ -129,9 +167,14 @@ class FilterY {
 
         $y_set = $table->query($sql);
         foreach ($y_set as $item) {
-            $y_data[] = $item['db_sum'];
+            foreach ($fields as $index) {
+                $y_data[$index][] = $item[$index . '_sum'];
+            }
         }
-        return implode(',', $y_data);
+        foreach ($y_data as $k => $v) {
+            $y_data[$k] = implode(',', $v);
+        }
+        return $y_data;
     }
 
     /**
@@ -151,20 +194,30 @@ class FilterY {
     public function __AVG($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
+        $fields = explode(',', $y);
+        $fields_sql = '';
+        foreach ($fields as $field) {
+            $fields_sql .= ',AVG(' . $field . ') AS ' . $field . '_avg';
+        }
+
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
             $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
-            $sql = 'SELECT *,AVG(' . $y . ') AS db_avg, ' . $group_time;
+            $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
             $sql .= 'GROUP BY group_time ORDER BY ' . $order;
         } else {
-            $child = 'SELECT ' . $x . ',AVG(' . $y . ') AS db_avg FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
+            $child = 'SELECT ' . $x . $fields_sql . ' FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
             if ($showAll) {
-                $sql = 'SELECT DISTINCT ' . $x . ',IF(db_avg IS NULL,0,db_avg) AS db_avg FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
+                $show_sql = '';
+                foreach ($fields as $field) {
+                    $show_sql .= ',IF( ' . $field . '_avg IS NULL, 0,' . $field . '_avg) AS ' . $field . '_avg';
+                }
+                $sql = 'SELECT DISTINCT ' . $x . $show_sql . ' FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
             } else {
                 $sql = $child . ' ORDER BY ' . $order;
             }
@@ -172,9 +225,14 @@ class FilterY {
 
         $y_set = $table->query($sql);
         foreach ($y_set as $item) {
-            $y_data[] = $item['db_avg'];
+            foreach ($fields as $index) {
+                $y_data[$index][] = $item[$index . '_avg'];
+            }
         }
-        return implode(',', $y_data);
+        foreach ($y_data as $k => $v) {
+            $y_data[$k] = implode(',', $v);
+        }
+        return $y_data;
 
     }
 
@@ -195,21 +253,31 @@ class FilterY {
     public function __MAX($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
+        $fields = explode(',', $y);
+        $fields_sql = '';
+        foreach ($fields as $field) {
+            $fields_sql .= ',MAX(' . $field . ') AS ' . $field . '_max';
+        }
+
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
             $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
-            $sql = 'SELECT *,MAX(' . $y . ') AS db_max, ' . $group_time;
+            $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
             $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
         } else {
-            $child = 'SELECT ' . $x . ',MAX(' . $y . ') AS db_max FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
+            $child = 'SELECT ' . $x . $fields_sql . ' FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
             if ($showAll) {
-                $sql = 'SELECT DISTINCT ' . $x . ',IF(db_max IS NULL,0,db_max) AS db_max FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
+                $show_sql = '';
+                foreach ($fields as $field) {
+                    $show_sql .= ',IF( ' . $field . '_max IS NULL, 0,' . $field . '_max) AS ' . $field . '_max';
+                }
+                $sql = 'SELECT DISTINCT ' . $x . $show_sql . ' FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
             } else {
                 $sql = $child . ' ORDER BY ' . $order;
             }
@@ -217,9 +285,14 @@ class FilterY {
 
         $y_set = $table->query($sql);
         foreach ($y_set as $item) {
-            $y_data[] = $item['db_max'];
+            foreach ($fields as $index) {
+                $y_data[$index][] = $item[$index . '_max'];
+            }
         }
-        return implode(',', $y_data);
+        foreach ($y_data as $k => $v) {
+            $y_data[$k] = implode(',', $v);
+        }
+        return $y_data;
     }
 
     /**
@@ -239,21 +312,31 @@ class FilterY {
     public function __MIN($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll) {
         $y_data = [];
 
+        $fields = explode(',', $y);
+        $fields_sql = '';
+        foreach ($fields as $field) {
+            $fields_sql .= ',MIN(' . $field . ') AS ' . $field . '_min';
+        }
+
         $table = M($tableName);
 
         if ($x_type == "__TIME") {
             //对根据时间分组的统计进行特殊处理
             $group_time = self::__TIME($tableName, $time_field, $time_section, $x, $x_type, $y, $y_type, $filter, $order, $showAll);
 
-            $sql = 'SELECT *,MIN(' . $y . ') AS db_min, ' . $group_time;
+            $sql = 'SELECT *' . $fields_sql . ',' . $group_time;
             $sql .= 'FROM ' . C('DB_PREFIX') . $tableName . ' ';
             $sql .= 'WHERE (' . $filter . ')  ';
             $sql .= 'GROUP BY group_time ORDER BY ' . $order;
 
         } else {
-            $child = 'SELECT ' . $x . ',MIN(' . $y . ') AS db_min FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
+            $child = 'SELECT ' . $x . $fields_sql . ' FROM ' . C('DB_PREFIX') . $tableName . ' WHERE (' . $filter . ') GROUP BY ' . $x;
             if ($showAll) {
-                $sql = 'SELECT DISTINCT ' . $x . ',IF(db_min IS NULL,0,db_min) AS db_min FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
+                $show_sql = '';
+                foreach ($fields as $field) {
+                    $show_sql .= ',IF( ' . $field . '_min IS NULL, 0,' . $field . '_min) AS ' . $field . '_min';
+                }
+                $sql = 'SELECT DISTINCT ' . $x . $show_sql . ' FROM (' . $child . ') AS a RIGHT JOIN ' . C('DB_PREFIX') . $tableName . ' USING (' . $x . ') ORDER BY ' . $order;
             } else {
                 $sql = $child . ' ORDER BY ' . $order;
             }
@@ -261,11 +344,14 @@ class FilterY {
 
         $y_set = $table->query($sql);
         foreach ($y_set as $item) {
-            $y_data[] = $item['db_min'];
+            foreach ($fields as $index) {
+                $y_data[$index][] = $item[$index . '_min'];
+            }
         }
-
-        echo $sql;
-        return implode(',', $y_data);
+        foreach ($y_data as $k => $v) {
+            $y_data[$k] = implode(',', $v);
+        }
+        return $y_data;
     }
 
     /**

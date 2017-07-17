@@ -151,10 +151,19 @@
             <div class="row">
 
                 <div class="col-md-3" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
-                    <select class="form-control" name="y" id="y_field" v-model="options.y">
-                        <option value="">请选择字段</option>
-                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    <select name="multi" id="multi" v-model="multi" class="form-control">
+                        <option value="0">单字段统计</option>
+                        <option value="1">多字段统计</option>
                     </select>
+                </div>
+
+                <div v-if="multi == 0">
+                    <div class="col-md-3" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
+                        <select class="form-control" name="y" id="y_field" v-model="options.y">
+                            <option value="">请选择字段</option>
+                            <option v-for="field in fields" :value="field">{{ field }}</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="col-md-3">
@@ -173,6 +182,34 @@
                             <option value="{$item}">{$item}</option>
                         </volist>
                     </select>
+                </div>
+            </div>
+
+            <div class="row" v-if="multi == 1" style="margin-top: 1rem;">
+                <div class="col-md-3" v-if="options.y_type.toUpperCase() != '__SCRIPT'">
+                    <select class="form-control" name="y" id="y_field">
+                        <option value="">请选择字段</option>
+                        <option v-for="field in fields" :value="field">{{ field }}</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-info" type="button" @click="addY()">添加</button>
+                </div>
+            </div>
+
+            <div class="row" v-if="multi == 1 && options.y != ''" style="margin-top: 1rem;">
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                            <th>统计字段列表</th>
+                        </tr>
+                        <tr v-for="(field,index) in splitY()" :field="field" :index="index">
+                            <td>{{ field }}</td>
+                            <td>
+                                <button class="btn btn-warning" type="button" @click="delY(index)">删除</button>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
@@ -335,6 +372,7 @@
             other_table: false,
             foreign_fields: [],
             other_foreign_table: false,
+            multi: 0,
             width: '900',
             height: '400',
             filter_field: '',
@@ -468,11 +506,34 @@
                         alert('图表创建失败!')
                     }
                 }, 'json');
+            },
+            addY: function () {
+                if (this.options.y !== '') {
+                    var yArray = this.options.y.split(',');
+                } else {
+                    var yArray = [];
+                }
+                yArray.push($('#y_field').val());
+                this.options.y = yArray.join(',');
+            },
+            delY: function (index) {
+                var yArray = this.options.y.split(',');
+                yArray.splice(index, 1);
+                this.options.y = yArray.join(',');
+            },
+            splitY: function () {
+                return this.options.y.split(',')
             }
         },
         watch: {
             'other_table': function () {
                 this.options.table = "";
+            },
+            'other_foreign_table': function () {
+                this.options.x_foreign_table = "";
+            },
+            'multi': function () {
+                this.options.y = "";
             }
         }
     })

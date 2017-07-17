@@ -23,9 +23,9 @@
     <script src="https://cdn.bootcss.com/echarts/3.6.1/echarts.common.min.js"></script>
 
     <style>
-        html,body{
+        html, body {
             height: 100%;
-            width:100%;
+            width: 100%;
         }
     </style>
 </head>
@@ -41,9 +41,8 @@
     option = {
         title: {
             text: '{$title}',
-            subtext:"{$subtext}"
+            subtext: "{$subtext}"
         },
-        color: ['#0099DA'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -89,12 +88,14 @@
             }
         ],
         series: [
-            {
-                name: '{$tips}',
-                type: 'bar',
-                barWidth: '60%',
-                data: "{$y_data}".split(',')
+            <?php
+            $tipsArray = explode(',', $tips);
+            $k = 0;
+            foreach ($y_data as $data) {
+                echo "{ name: '$tipsArray[$k]', type: 'bar', data: '$data'.split(',')},";
+                $k++;
             }
+            ?>
         ]
     };
 
