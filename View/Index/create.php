@@ -514,8 +514,12 @@
                 } else {
                     var yArray = [];
                 }
-                yArray.push($('#y_field').val());
-                this.options.y = yArray.join(',');
+
+                var field = $('#y_field').val();
+                if (yArray.indexOf(field) === -1) {
+                    yArray.push(field);
+                    this.options.y = yArray.join(',');
+                }
             },
             delY: function (index) {
                 var yArray = this.options.y.split(',');
