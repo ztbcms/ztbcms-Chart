@@ -317,7 +317,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <input type="text" class="form-control" name="tips" id="tips" v-model="options.tips"
-                           placeholder="请输入图表悬浮提示">
+                           placeholder="请输入图表悬浮提示，多个提示间使用英文逗号分隔">
                 </div>
             </div>
         </div>
