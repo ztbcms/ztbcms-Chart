@@ -9,6 +9,7 @@ CREATE TABLE `cms_chart_list` (
   `time_section` VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '时间区间',
   `x`       VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'X 轴筛选字段',
   `x_type`  VARCHAR(255)  NOT NULL DEFAULT 'field' COMMENT 'X 轴筛选类型',
+  `x_time`  VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'X 轴时间段',
   `x_script`  VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'X 轴脚本',
   `x_foreign_table`  VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'X 轴关联表',
   `x_foreign_key`  VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'X 轴关联外键',

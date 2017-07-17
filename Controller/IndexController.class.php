@@ -132,7 +132,7 @@ class IndexController extends AdminBase {
         $filter = ChartService::getFilter($get['table'], $get['filter'], $get['operator'], $get['value']);
 
         //设置 X 轴数据
-        $x_data = ChartService::getX($get['table'], $get['time_field'], $get['time_section'], $get['x'], $get['x_type'],
+        $x_data = ChartService::getX($get['table'], $get['time_field'], $get['time_section'], $get['x'], $get['x_type'], $get['x_time'],
             $get['x_script'], $get['x_foreign_table'], $get['x_foreign_key'], $get['x_foreign_field'], $filter, $get['order'], $get['show_all']);
         $this->assign('x_data', $x_data);
 

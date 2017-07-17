@@ -14,6 +14,7 @@ class FilterX {
      * @param        $time_section
      * @param        $x
      * @param string $x_type
+     * @param string $x_time 时间段
      * @param string $x_script 脚本
      * @param string $x_foreign_table 关联表
      * @param string $x_foreign_key 关联字段
@@ -29,6 +30,7 @@ class FilterX {
         $time_section,
         $x,
         $x_type,
+        $x_time,
         $x_script,
         $x_foreign_table,
         $x_foreign_key,
@@ -61,6 +63,7 @@ class FilterX {
      * @param        $time_section
      * @param        $x
      * @param string $x_type
+     * @param string $x_time 时间段
      * @param string $x_script 脚本
      * @param string $x_foreign_table 关联表
      * @param string $x_foreign_key 关联字段
@@ -76,6 +79,7 @@ class FilterX {
         $time_section,
         $x,
         $x_type,
+        $x_time,
         $x_script,
         $x_foreign_table,
         $x_foreign_key,
@@ -114,6 +118,7 @@ class FilterX {
      * @param $time_section
      * @param $x
      * @param string $x_type
+     * @param string $x_time 时间段
      * @param string $x_script 脚本
      * @param string $x_foreign_table 关联表
      * @param string $x_foreign_key 关联字段
@@ -129,6 +134,7 @@ class FilterX {
         $time_section,
         $x,
         $x_type,
+        $x_time,
         $x_script,
         $x_foreign_table,
         $x_foreign_key,
@@ -140,19 +146,19 @@ class FilterX {
 
         $group_time = '';
 
-        $x = explode('-', strtoupper(trim($x)));
+        $x_time = explode('-', strtoupper(trim($x_time)));
 
-        switch ($x[0]) {
+        switch ($x_time[0]) {
             case 'I':
                 //按分钟统计
                 $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d %H:\'), ';
 
-                $group1 = $group2 = range(0, 60, $x[1]);
+                $group1 = $group2 = range(0, 60, $x_time[1]);
                 unset($group2[0]);
                 $index = implode(',', $group1);
 
 
-                if (60 % $x[1] !== 0) {
+                if (60 % $x_time[1] !== 0) {
                     $group2[] = 60;
                     $index .= ',60';
                 }
@@ -169,11 +175,11 @@ class FilterX {
                 //按小时统计
                 $real_time = 'DATE_FORMAT(FROM_UNIXTIME(' . $time_field . '),\'%Y-%m-%d \'), ';
 
-                $group1 = $group2 = range(0, 24, $x[1]);
+                $group1 = $group2 = range(0, 24, $x_time[1]);
                 unset($group2[0]);
                 $index = implode(',', $group1);
 
-                if (24 % $x[1] !== 0) {
+                if (24 % $x_time[1] !== 0) {
                     $group2[] = 24;
                     $index .= ',24';
                 }
@@ -221,6 +227,7 @@ class FilterX {
      * @param $time_section
      * @param $x
      * @param string $x_type
+     * @param string $x_time 时间段
      * @param string $x_script 脚本
      * @param string $x_foreign_table 关联表
      * @param string $x_foreign_key 关联字段
@@ -236,6 +243,7 @@ class FilterX {
         $time_section,
         $x,
         $x_type,
+        $x_time,
         $x_script,
         $x_foreign_table,
         $x_foreign_key,
@@ -245,6 +253,6 @@ class FilterX {
         $showAll
     ) {
         $sctipt = new $x_script();
-        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $x_script, $x_foreign_table, $x_foreign_key, $x_foreign_field, $filter, $order, $showAll);
+        return $sctipt->run($tableName, $time_field, $time_section, $x, $x_type, $x_time, $x_script, $x_foreign_table, $x_foreign_key, $x_foreign_field, $filter, $order, $showAll);
     }
 }

@@ -392,6 +392,7 @@
                 time_section: '',
                 x: '',
                 x_type: '',
+                x_time: '',
                 x_foreign_table: '',
                 x_foreign_key: '',
                 x_foreign_field: '',
@@ -493,7 +494,7 @@
                 var that = this;
 
                 if (this.options.x_type.toUpperCase() === "__TIME") {
-                    this.options.x = this.time_unit + '-' + this.x_space;
+                    this.options.x_time = this.time_unit + '-' + this.x_space;
                 }
 
                 var postData = Object.assign(this.options, this.filter);
