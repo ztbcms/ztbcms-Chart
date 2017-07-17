@@ -43,7 +43,6 @@
             text: '{$title}',
             subtext:"{$subtext}"
         },
-        color: ['#0099DA'],
         toolbox: {
             show: {$tool},
             feature: {
@@ -77,11 +76,16 @@
             type: 'slider',
             filterMode: 'filter'
         }],
-        series: {
-            name: '{$tips}',
-            type: 'line',
-            data: "{$y_data}".split(','),
-        }
+        series: [
+            <?php
+            $tipsArray = explode(',', $tips);
+            $k = 0;
+            foreach ($y_data as $data) {
+                echo "{ name: '$tipsArray[$k]', type: 'line', data: '$data'.split(',')},";
+                $k++;
+            }
+            ?>
+        ]
     }
 
     // 使用刚指定的配置项和数据显示图表。

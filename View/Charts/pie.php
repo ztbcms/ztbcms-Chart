@@ -35,17 +35,6 @@
 <div id="main" style="position:absolute;width: {$size[width]};height:{$size[height]};"></div>
 
 <script>
-    x_data = "{$x_data}".split(',');
-    y_data = "{$y_data}".split(',');
-    data = [];
-    y_data.forEach(function (y, index) {
-        data.push({
-            name: x_data[index],
-            value: y
-        });
-    });
-</script>
-<script>
     // 基于准备好的dom，初始化echarts实例
     app = echarts.init(document.getElementById('main'));
 
@@ -69,20 +58,28 @@
             formatter: "{a} <br/>{b} : {c} ({d}%)"
         },
         series: [
-            {
-                name: '{$tips}',
-                type: 'pie',
-                radius: '55%',
-                center: ['50%', '60%'],
-                data: data,
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
+            <?php
+            $tipsArray = explode(',', $tips);
+            $k = 0;
+            $x_data = explode(',', $x_data);
+            foreach ($y_data as $v) {
+                $sizeStart = ($k + 2) * 10;
+                $sizeEnd = ($k + 2) * 10 + 5;
+                $v = explode(',', $v);
+                $data = '';
+                foreach ($v as $i=> $j) {
+                    $name = $x_data[$i];
+                    $data .= "{name: \"$name\",value: \"$j\"},";
                 }
+                echo "{
+                name: '$tipsArray[$k]',
+                type: 'pie',
+                radius: ['$sizeStart%', '$sizeEnd%'],
+                data: [$data], 
+            }";
+                $k++;
             }
+            ?>
         ]
     };
 
