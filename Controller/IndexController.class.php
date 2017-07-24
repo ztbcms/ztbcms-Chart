@@ -68,14 +68,22 @@ class IndexController extends AdminBase {
      * @return array
      */
     protected function getXScripts() {
-        $scriptDir = new \Dir(APP_PATH . '/Chart/Script/X');
-        $scriptList = $scriptDir->toArray();
+        $dir = new \Dir(APP_PATH);
+        $dir = $dir->toArray();
         $scripts = [];
 
         //遍历模块
-        foreach ($scriptList as $item) {
-            $script_classname = str_replace('.class.php', '', $item['filename']);
-            $scripts[] = "\\Chart\\Script\\X\\" . $script_classname;
+        foreach ($dir as $item) {
+            $charScriptPath = APP_PATH . $item['filename'] . DIRECTORY_SEPARATOR . 'ChartScript' . DIRECTORY_SEPARATOR . 'X';
+            // 是否存在 ChartScript
+            if (file_exists($charScriptPath)) {
+                $scriptDir = new \Dir($charScriptPath);
+                $scriptDir = $scriptDir->toArray();
+                foreach ($scriptDir as $script) {
+                    $script_classname = str_replace('.class.php', '', $script['filename']);
+                    $scripts[] = '\\' . $item['filename'] .'\\ChartScript\\X\\' . $script_classname;
+                }
+            }
         }
 
         return $scripts;
@@ -90,18 +98,25 @@ class IndexController extends AdminBase {
      * @return array
      */
     protected function getYScripts() {
-        $scriptDir = new \Dir(APP_PATH . '/Chart/Script/Y');
-        $scriptList = $scriptDir->toArray();
+        $dir = new \Dir(APP_PATH);
+        $dir = $dir->toArray();
         $scripts = [];
 
         //遍历模块
-        foreach ($scriptList as $item) {
-            $script_classname = str_replace('.class.php', '', $item['filename']);
-            $scripts[] = "\\Chart\\Script\\Y\\" . $script_classname;
+        foreach ($dir as $item) {
+            $charScriptPath = APP_PATH . $item['filename'] . DIRECTORY_SEPARATOR . 'ChartScript' . DIRECTORY_SEPARATOR . 'Y';
+            // 是否存在 ChartScript
+            if (file_exists($charScriptPath)) {
+                $scriptDir = new \Dir($charScriptPath);
+                $scriptDir = $scriptDir->toArray();
+                foreach ($scriptDir as $script) {
+                    $script_classname = str_replace('.class.php', '', $script['filename']);
+                    $scripts[] = '\\' . $item['filename'] .'\\ChartScript\\Y\\' . $script_classname;
+                }
+            }
         }
 
         return $scripts;
-
     }
 
     protected function getYTypes() {
