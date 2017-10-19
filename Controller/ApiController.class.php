@@ -126,16 +126,16 @@ class ApiController extends Controller {
     protected function showChart($type = 1) {
         switch ($type) {
             case ChartModel::CHART_BAR:
-                $this->display('charts/bar');
+                $this->display('Charts/bar');
                 break;
             case ChartModel::CHART_LINK:
-                $this->display('charts/link');
+                $this->display('Charts/link');
                 break;
             case ChartModel::CHART_PIE:
-                $this->display('charts/pie');
+                $this->display('Charts/pie');
                 break;
             default:
-                $this->display('charts/bar');
+                $this->display('Charts/bar');
         }
     }
 }
