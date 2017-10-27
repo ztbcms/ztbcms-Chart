@@ -43,7 +43,13 @@ class ChartService {
         if (empty($filter)) $filter = '1=1';
         if ($time_section) $filter .= self::getTimeFilter($time_field, $time_section);
 
-        $x_filter = ChartModel::X_TYPE[$x_type];
+        $x_type_arr = [
+            "__FIELD" => '按原字段分组',
+            "__TIME" => '按时间段分组',
+            '__FOREIGN' => '使用关联表字段分组',
+            '__SCRIPT' => '使用脚本分组',
+        ];
+        $x_filter = $x_type_arr[$x_type];
 
         if ($x_filter) {
             $x_filter = new FilterX();
@@ -88,7 +94,16 @@ class ChartService {
         if (empty($filter)) $filter = '1=1';
         if ($time_section) $filter .= self::getTimeFilter($time_field, $time_section);
 
-        $y_filter = ChartModel::Y_TYPE[$y_type];
+        $y_type_arr = [
+            '__FIELD' => '原字段输出',
+            '__COUNT' => '字段计数',
+            '__SUM' => '求和',
+            '__AVG' => '平均值',
+            '__MAX' => '最大值',
+            '__MIN' => '最小值',
+            '__SCRIPT' => '使用脚本',
+        ];
+        $y_filter = $y_type_arr[$y_type];
 
         if ($y_filter) {
             $y_filter = new FilterY();

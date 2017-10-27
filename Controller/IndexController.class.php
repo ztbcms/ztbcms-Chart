@@ -90,7 +90,12 @@ class IndexController extends AdminBase {
     }
 
     protected function getXTypes() {
-        return ChartModel::X_TYPE;
+        return [
+            "__FIELD" => '按原字段分组',
+            "__TIME" => '按时间段分组',
+            '__FOREIGN' => '使用关联表字段分组',
+            '__SCRIPT' => '使用脚本分组',
+        ];
     }
 
     /**
@@ -120,11 +125,35 @@ class IndexController extends AdminBase {
     }
 
     protected function getYTypes() {
-        return ChartModel::Y_TYPE;
+        return [
+            '__FIELD' => '原字段输出',
+            '__COUNT' => '字段计数',
+            '__SUM' => '求和',
+            '__AVG' => '平均值',
+            '__MAX' => '最大值',
+            '__MIN' => '最小值',
+            '__SCRIPT' => '使用脚本',
+        ];
     }
 
     protected function getDuring() {
-        return ChartModel::DURING;
+        return [
+            'I-5' => '最近5分钟',
+            'I-15' => '最近15分钟',
+            'I-30' => '最近30分钟',
+            'H-1' => '最近1小时',
+            'H-3' => '最近3小时',
+            'H-12' => '最近12小时',
+            'D-1' => '最近1天',
+            'D-3' => '最近3天',
+            'D-7' => '最近7天',
+            'D-15' => '最近15天',
+            'M-1' => '最近一个月',
+            'M-3' => '最近三个月',
+            'M-6' => '最近半年',
+            'Y-1' => '最近一年',
+            'Y-3' => '最近一年'
+        ];
     }
 
     /**
